@@ -14,15 +14,15 @@ function renderConfigUnit(apiItem) {
     },`;
 }
 
-function renderApiConfigCode(apiDatas, config) {
+function renderApiConfigCode(apiData, config) {
   const apiConfigTips = '// 该文件自动生成，请勿修改(除非知道自己在做什么)\n/* eslint-disable */\n';
 
   const configExport = 'export default {\n';
 
   let result = apiConfigTips + configExport;
 
-  for (let i = 0; i < apiDatas.length; i++) {
-    const apiItem = apiDatas[i];
+  for (let i = 0; i < apiData.length; i++) {
+    const apiItem = apiData[i];
     result += renderConfigUnit(apiItem);
   }
 
