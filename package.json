@@ -1,0 +1,24 @@
+{
+  "name": "auto-api-generator",
+  "version": "1.0.0",
+  "description": "auto-api-generator是一个高效能的工具，专门用来自动化创建API接口及其相关文档",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TyrantL/auto-api-generator.git"
+  },
+  "bin": {
+    "auto-api-generator": "./bin/index.js create"
+  },
+  "scripts": {
+    "api": "node bin/index.js create --config ./.api.config.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "chalk": "^4.1.2",
+    "commander": "^7.0.0"
+  }
+}
