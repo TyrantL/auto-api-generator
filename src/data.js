@@ -1,6 +1,6 @@
 const axios = require('axios');
 const chalk = require('chalk');
-const { trimBlank, formatApiName } = require('../utils');
+const { trimBlank, formatApiName, getTypeName } = require('../utils');
 
 async function getRequestUrl(config) {
   const host = config.host || 'https://letao.cnstrong.cn';
@@ -48,8 +48,9 @@ async function getApiData(config) {
   return ret;
 }
 
-function fixedApiName(apiItem, method, config, nameExistMap) {
-  const apiName = formatApiName(apiItem.path, method);
+// 接口重新生成与重复校验
+function fixedApiName({ path, method }, config, nameExistMap) {
+  const apiName = formatApiName(path, method);
 
   if (nameExistMap[apiName]) {
     console.error(chalk.red(`${apiName} 接口名称重复，请排查修正后再生成`));
@@ -57,27 +58,22 @@ function fixedApiName(apiItem, method, config, nameExistMap) {
   }
 
   nameExistMap[apiName] = true;
-
   return apiName;
 }
 
-function formatApiData(paths, responseInfoMap, config) {
+function formatApiData(apis, config) {
   // 存储已存在的接口
   const existApiMap = {};
 
-  const apis = Object.entries(paths).map(([path, context]) => {
-
-    const method = Object.keys(context)[0];
-    const apiItem = { ...context[method], path };
-
+  apis = apis.map((apiItem) => {
     return {
       id: apiItem.operationId,
-      method,
-      apiName: fixedApiName(apiItem, method, config, existApiMap),
-      path,
+      method: apiItem.method.toLowerCase(),
+      apiName: fixedApiName(apiItem, config, existApiMap),
+      path: apiItem.path,
       basePath: config.basePath,
       title: trimBlank(apiItem.summary),
-      code: generateApiCode(apiItem, responseInfoMap, config),
+      headers: apiItem.headersJson ? `headers: { 'Content-Type': '${apiItem.headersJson}' },` : '',
     };
   });
 
@@ -93,8 +89,9 @@ function formatData(originData) {
     const apiInfo = context[method];
     apiInfo.path = path;
     apiInfo.method = method;
-    apiInfo.params = [];
+    apiInfo.query = [];
     apiInfo.body = [];
+    apiInfo.response = [];
 
     formatRequest(apiInfo, responseInfoMap);
 
@@ -110,21 +107,23 @@ function formatResponse(apiInfo, schemas) {
     return;
   }
 
-  apiInfo.body = getBodyFromSchemas(schemas, apiInfo.responses[200].content['*/*'].schema.$ref, apiInfo);
+  apiInfo.response = getResponseFromSchemas(schemas, apiInfo.responses[200].content['*/*'].schema.$ref, apiInfo);
 }
 
-//处理入参，入参有两种情况 parameters 和 requestBody
+//处理入参，入参有两种情况 parameters(query) 和 requestBody(body)
 function formatRequest(apiInfo, schemas) {
   if (apiInfo.parameters) {
     apiInfo.parameters.forEach((item) => {
-      apiInfo.params.push({
+      apiInfo.query.push({
         name: item.name,
         description: item.description,
         required: item.required,
         type: item.schema?.type ?? 'any',
-        items: item.schema?.items?.type ?? 'any',
+        subType: item.schema?.items?.type ?? null,
+        properties: [],
       });
     });
+    apiInfo.title = getTypeName(apiInfo.description);
   }
 
   if (apiInfo.requestBody) {
@@ -137,25 +136,30 @@ function formatRequest(apiInfo, schemas) {
       apiInfo.headersJson = contentType;
     }
 
-    apiInfo.params = apiInfo.params.concat(getContentFromSchemas(schemas, content[contentType].schema.$ref, apiInfo));
+    const { title, body } = getContentFromSchemas(schemas, content[contentType].schema.$ref, apiInfo);
+
+    apiInfo.title = title;
+    apiInfo.body = body;
   }
 }
 
 function getContentFromSchemas(schemas, ref, apiInfo) {
   const targetComponent = ref.startsWith('#/components/schemas/') ? ref.split('/')[3] : ref;
 
-  let params = [];
+  let body = [];
+  let title = null;
 
   if (!schemas[targetComponent]) {
     // todo 文档中入参有异常
     console.error(chalk.red(`[${apiInfo.path}]接口入参异常，请联系后端排查`));
-    return params;
+    return body;
   }
 
-  params = Object.entries(schemas[targetComponent].properties).map(([key, obj]) => {
-    let attributes = [];
+  body = Object.entries(schemas[targetComponent].properties).map(([key, obj]) => {
+    let properties = [];
     if (obj.$ref) {
-      attributes = getContentFromSchemas(schemas, obj.$ref, apiInfo);
+      const { title, body} = getContentFromSchemas(schemas, obj.$ref, apiInfo);
+      properties = body;
     }
 
     return {
@@ -163,38 +167,40 @@ function getContentFromSchemas(schemas, ref, apiInfo) {
       description: obj.description,
       required: obj.required,
       type: obj.type,
-      items: obj.items?.type ?? null,
-      attributes,
+      subType: obj.items?.type ?? null,
+      title,
+      properties,
     };
   });
 
-  return params;
+
+  return { title: schemas[targetComponent].title, body };
 }
 
-function getBodyFromSchemas(schemas, ref, apiInfo) {
+function getResponseFromSchemas(schemas, ref, apiInfo) {
   const targetComponent = ref.startsWith('#/components/schemas/') ? ref.split('/')[3] : ref;
-  let body = [];
+  let res = [];
 
   if (!schemas[targetComponent]) {
     // todo 文档中出参有异常
     console.error(chalk.red(`[${apiInfo.path}]接口出参异常，请联系后端排查`));
-    return body;
+    return res;
   }
   const { data } = schemas[targetComponent].properties;
 
   if (!data.type) {
     // 递归获取参数模板，模板在data.$ref中
-    body = parseBody(schemas, data.$ref, apiInfo);
+    res = parseBody(schemas, data.$ref, apiInfo);
   } else if (data.type === 'array' && data.items.$ref) {
     // 递归获取参数模板，模板在data.items中
-    body = {
+    res = {
       name: null,
       type: 'array',
       description: data.description,
       items: parseBody(schemas, data.items.$ref, apiInfo),
     };
   } else {
-    body.push({
+    res.push({
       description: data.description,
       type: data.type,
       name: null,
@@ -202,21 +208,21 @@ function getBodyFromSchemas(schemas, ref, apiInfo) {
     });
   }
 
-  return body;
+  return res;
 }
 
 function parseBody(schemas, ref, apiInfo) {
-  let body = [];
+  let res = [];
   const targetComponent = ref.startsWith('#/components/schemas/') ? ref.split('/')[3] : ref;
 
   if (!schemas[targetComponent]) {
     // todo 文档中出参有异常
     console.error(chalk.red(`[${apiInfo.path}]接口出参异常，请联系后端排查`));
-    return body;
+    return res;
   }
   const properties = schemas[targetComponent].properties;
 
-  body = Object.entries(properties).map(([key, obj]) => {
+  res = Object.entries(properties).map(([key, obj]) => {
     let attributes = [];
     if (obj.$ref) {
       attributes = parseBody(schemas, obj.$ref, apiInfo);
@@ -230,7 +236,7 @@ function parseBody(schemas, ref, apiInfo) {
     };
   });
 
-  return body;
+  return res;
 }
 
 exports.getApiData = getApiData;

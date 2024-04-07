@@ -1,6 +1,7 @@
 const chalk = require('chalk');
 const { getApiData, formatApiData, formatData } = require('./data');
 const mergeConfig = require('./config');
+const { generateCodeFile } = require('./file');
 
 async function generateCode(opts) {
   const { projects } = opts;
@@ -22,10 +23,11 @@ async function generateCode(opts) {
         output: opts.output,
         ...curProject,
       });
-      const data = formatData({ apis, responseInfoMap });
+      const ret = formatData({ apis, responseInfoMap });
 
-      // console.log(data);
-      // let data = formatApiData(apis, responseInfoMap, config);
+      const data = formatApiData(ret, config);
+
+      await generateCodeFile(data, config, opts)
     }
   }
 }
