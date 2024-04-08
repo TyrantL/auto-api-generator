@@ -6,7 +6,6 @@ function getOptionsField(apiItem) {
 }
 
 function renderConfigUnit(apiItem) {
-  console.log(apiItem);
   return `${apiItem.apiName}: {
         url: '${apiItem.path}',
         method: '${apiItem.method}',

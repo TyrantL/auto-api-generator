@@ -3,11 +3,15 @@ const fs = require('fs-extra');
 const prettier = require('prettier');
 
 const { renderApiConfigCode } = require('../template/config');
+const { renderApiCallTsCode } = require('../template/api');
 
 const tsCodeTemplateConfig = {
   'config.ts': {
     render: renderApiConfigCode,
   },
+  'api.ts': {
+    render: renderApiCallTsCode,
+  }
 };
 
 async function generateCodeFile(data, config, opt) {
