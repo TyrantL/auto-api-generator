@@ -11,7 +11,6 @@ const tsCodeTemplateConfig = {
 };
 
 async function generateCodeFile(data, config, opt) {
-
   const folderName = config.folderName ?? config.projectName;
   const outputFolder = path.resolve(config.output, folderName);
 
