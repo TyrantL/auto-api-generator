@@ -40,8 +40,22 @@ function prettierCode(code) {
 function genFile(code, fileName, outputFolder, config) {
   const outputPath = path.resolve(outputFolder, fileName);
   fs.outputFileSync(outputPath, prettierCode(code), 'utf8');
+  console.log(`${outputPath}更新完成!`);
+}
+
+async function generateAxiosTemplate(opts) {
+  const outputFile = path.resolve(opts.output, 'request.js');
+
+  // 如果request.js不存在，则生成一个request模板，后续考虑剥离axios模板成为一个独立的通用请求库
+  const isExist = await fs.pathExists(outputFile);
+
+  if (!isExist) {
+    const template = await fs.readFileSync(path.resolve(__dirname, '../template/request.js'), 'utf8');
+    fs.outputFileSync(path.resolve(opts.output, 'request.js'), template, 'utf8');
+  }
 }
 
 module.exports = {
   generateCodeFile,
+  generateAxiosTemplate,
 };

@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 const { getApiData, formatApiData, formatData } = require('./data');
 const mergeConfig = require('./config');
-const { generateCodeFile } = require('./file');
+const { generateCodeFile, generateAxiosTemplate } = require('./file');
 
 async function generateCode(opts) {
   const { projects } = opts;
@@ -30,6 +30,7 @@ async function generateCode(opts) {
       await generateCodeFile(data, config, opts)
     }
   }
+  generateAxiosTemplate(opts);
 }
 
 module.exports = generateCode;
