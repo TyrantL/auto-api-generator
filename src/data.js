@@ -149,7 +149,6 @@ function getContentFromSchemas(schemas, ref, apiInfo) {
   const targetComponent = ref.startsWith('#/components/schemas/') ? ref.split('/')[3] : ref;
 
   let body = [];
-  let title = null;
 
   if (!schemas[targetComponent]) {
     // todo 文档中入参有异常
@@ -174,7 +173,6 @@ function getContentFromSchemas(schemas, ref, apiInfo) {
       required: obj.required ?? false,
       type: obj.type,
       subType: obj.items?.type ?? null,
-      title,
       properties,
     };
   });
