@@ -1,6 +1,7 @@
 const axios = require('axios');
 const chalk = require('chalk');
 const { trimBlank, formatApiName, getTypeName } = require('../utils');
+const { generateTsTypesCode } = require('./code');
 
 async function getRequestUrl(config) {
   const host = config.host || 'https://letao.cnstrong.cn';
@@ -66,6 +67,7 @@ function formatApiData(apis, config) {
   const existApiMap = {};
 
   apis = apis.map((apiItem) => {
+    const code = generateTsTypesCode(apiItem, config);
     return {
       id: apiItem.operationId,
       method: apiItem.method.toLowerCase(),
@@ -74,6 +76,7 @@ function formatApiData(apis, config) {
       basePath: config.basePath,
       title: trimBlank(apiItem.summary),
       headers: apiItem.headersJson ? `headers: { 'Content-Type': '${apiItem.headersJson}' },` : '',
+      code,
     };
   });
 
@@ -89,9 +92,9 @@ function formatData(originData) {
     const apiInfo = context[method];
     apiInfo.path = path;
     apiInfo.method = method;
-    apiInfo.query = [];
-    apiInfo.body = [];
-    apiInfo.response = [];
+    apiInfo.query = null;
+    apiInfo.body = null;
+    apiInfo.response = null;
 
     formatRequest(apiInfo, responseInfoMap);
 
@@ -112,17 +115,19 @@ function formatResponse(apiInfo, schemas) {
 
 //处理入参，入参有两种情况 parameters(query) 和 requestBody(body)
 function formatRequest(apiInfo, schemas) {
+  const query = [];
   if (apiInfo.parameters) {
     apiInfo.parameters.forEach((item) => {
-      apiInfo.query.push({
+      query.push({
         name: item.name,
         description: item.description,
         required: item.required,
         type: item.schema?.type ?? 'any',
         subType: item.schema?.items?.type ?? null,
-        properties: [],
+        properties: null,
       });
     });
+    apiInfo.query = query;
     apiInfo.title = getTypeName(apiInfo.description);
   }
 
@@ -156,16 +161,20 @@ function getContentFromSchemas(schemas, ref, apiInfo) {
   }
 
   body = Object.entries(schemas[targetComponent].properties).map(([key, obj]) => {
-    let properties = [];
+    let properties = null;
+
     if (obj.$ref) {
-      const { title, body} = getContentFromSchemas(schemas, obj.$ref, apiInfo);
-      properties = body;
+      properties = getContentFromSchemas(schemas, obj.$ref, apiInfo).body;
+    }
+
+    if (obj.type === 'array' && obj.items?.$ref) {
+      properties = getContentFromSchemas(schemas, obj.items.$ref, apiInfo).body;
     }
 
     return {
       name: key,
       description: obj.description,
-      required: obj.required,
+      required: obj.required ?? false,
       type: obj.type,
       subType: obj.items?.type ?? null,
       title,
