@@ -67,7 +67,7 @@ function formatApiData(apis, config) {
   const existApiMap = {};
 
   apis = apis.map((apiItem) => {
-    const code = generateTsTypesCode(apiItem, config);
+    const codes = generateTsTypesCode(apiItem, config);
     return {
       id: apiItem.operationId,
       method: apiItem.method.toLowerCase(),
@@ -76,7 +76,7 @@ function formatApiData(apis, config) {
       basePath: config.basePath,
       title: trimBlank(apiItem.summary),
       headers: apiItem.headersJson ? `headers: { 'Content-Type': '${apiItem.headersJson}' },` : '',
-      code,
+      codes,
     };
   });
 

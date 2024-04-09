@@ -4,6 +4,7 @@ const prettier = require('prettier');
 
 const { renderApiConfigCode } = require('../template/config');
 const { renderApiCallTsCode } = require('../template/api');
+const { renderApiTypesTsCode } = require('../template/api.types');
 
 const tsCodeTemplateConfig = {
   'config.ts': {
@@ -11,6 +12,9 @@ const tsCodeTemplateConfig = {
   },
   'api.ts': {
     render: renderApiCallTsCode,
+  },
+  'api.types.ts': {
+    render: renderApiTypesTsCode,
   }
 };
 

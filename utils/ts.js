@@ -53,6 +53,22 @@ const utils = {
     return str.replace(/["\\]/g, '');
   },
 
+  tsUseTypeDeclare(type) {
+    return !type || type === 'any' || isBaseType(type) || utils.isTsArray(type) || utils.isTsRecord(type) || utils.isTsSet(type);
+  },
+
+  isTsArray(str) {
+    return str.startsWith('Array<');
+  },
+
+  isTsRecord(str) {
+    return str.startsWith('Record<');
+  },
+
+  isTsSet(str) {
+    return str.startsWith('Set<');
+  },
+
   // 过滤属性为{}的情况
   trimFieldName(str) {
     return (str || '').replace(/[{}]/ig, '');
