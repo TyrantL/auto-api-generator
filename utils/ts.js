@@ -2,7 +2,6 @@ const {
   deepEqual,
   isBaseType,
   trimBlank,
-  getTypeName,
   getBaseTypeMapping,
   firstCharUpper,
 } = require('./index');
