@@ -19,10 +19,11 @@ async function generateCode(opts) {
         console.error(chalk.red(`projectName:【${chalk.blueBright(curProject.projectName)}】获取到的接口数据为空，请确认配置是否正确或者接口服务正常`));
       }
 
-      const config = mergeConfig({
+      const config ={
         output: opts.output,
         ...curProject,
-      });
+      };
+
       const ret = formatData({ apis, responseInfoMap });
 
       const data = formatApiData(ret, config);
