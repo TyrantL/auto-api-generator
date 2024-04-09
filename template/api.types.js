@@ -20,7 +20,7 @@ function renderCodeUnit(apiItem, config) {
   const name = firstCharUpper(apiItem.apiName);
 
   const comment = config.comment
-    ? `// ${apiItem.title ? `${apiItem.title} ` : ''}${apiItem.method} ${apiItem.path.replace(/\*\//gi, '{*}/')}\n`
+    ? `/** ${apiItem.title ? `${apiItem.title} ` : ''}${apiItem.method} ${apiItem.path.replace(/\*\//gi, '{*}/')} */\n`
     : '';
 
   return `${comment}${getDeclare(name, apiItem.codes)}`;
