@@ -141,10 +141,7 @@ function formatRequest(apiInfo, schemas) {
       apiInfo.headersJson = contentType;
     }
 
-    const { title, body } = getContentFromSchemas(schemas, content[contentType].schema.$ref, apiInfo);
-
-    apiInfo.title = title;
-    apiInfo.body = body;
+    apiInfo.body = getContentFromSchemas(schemas, content[contentType].schema.$ref, apiInfo);
   }
 }
 
@@ -164,11 +161,11 @@ function getContentFromSchemas(schemas, ref, apiInfo) {
     let properties = null;
 
     if (obj.$ref) {
-      properties = getContentFromSchemas(schemas, obj.$ref, apiInfo).body;
+      properties = getContentFromSchemas(schemas, obj.$ref, apiInfo);
     }
 
     if (obj.type === 'array' && obj.items?.$ref) {
-      properties = getContentFromSchemas(schemas, obj.items.$ref, apiInfo).body;
+      properties = getContentFromSchemas(schemas, obj.items.$ref, apiInfo);
     }
 
     return {
@@ -183,7 +180,7 @@ function getContentFromSchemas(schemas, ref, apiInfo) {
   });
 
 
-  return { title: schemas[targetComponent].title, body };
+  return body;
 }
 
 function getResponseFromSchemas(schemas, ref, apiInfo) {
