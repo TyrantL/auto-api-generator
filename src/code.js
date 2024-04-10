@@ -1,18 +1,17 @@
 const utils = require('../utils/ts');
 
 function generateTsTypesCode(apiData, config) {
+  const models = [];
   // 解析query入参
   const params = utils.transform2TsTypesCode(apiData.query, config, apiData);
   // 解析body入参
   const data = utils.transform2TsTypesCode(apiData.body, config, apiData, params.models);
-
-  const models = [];
-
-  const req = params.code || data.code;
+  // 解析 response
+  const res = utils.transform2TsTypesCode(apiData.response, config, apiData, [...params.models, ...data.models]);
 
   const modelsMap = {};
 
-  [...params.models, ...data.models].forEach(m => {
+  [].concat(params.models, data.models, res.models).forEach(m => {
     if (!modelsMap[m.name]) {
       modelsMap[m.name] = true;
       m.value = utils.trimJsonString2Ts(config.comment ? utils.concatComment(m.value) : JSON.stringify(m.value));
@@ -21,7 +20,8 @@ function generateTsTypesCode(apiData, config) {
   });
 
   return {
-    req,
+    req: params.code || data.code,
+    res: res.code,
     models,
   };
 }

@@ -1,6 +1,6 @@
 const axios = require('axios');
 const chalk = require('chalk');
-const { trimBlank, formatApiName, getTypeName } = require('../utils');
+const { trimBlank, formatApiName } = require('../utils');
 const { generateTsTypesCode } = require('./code');
 
 async function getRequestUrl(config) {

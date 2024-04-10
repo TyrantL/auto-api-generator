@@ -9,10 +9,12 @@ function generateInterface(models) {
 
 function getDeclare(name, c) {
   const reqUseType = !c.req || utils.tsUseTypeDeclare(c.req);
+  const resUseType = !c.res || utils.tsUseTypeDeclare(c.res);
 
   return `export module ${name} {
     ${generateInterface(c.models)}
-    ${reqUseType ? `export type Req = ${c.req || 'any'}` : `export interface Req ${c.req}`}
+    ${reqUseType ? `export type Req = ${c.req || 'any'}` : `export interface Req ${c.req}`}\n
+    ${resUseType ? `export type Res = ${c.res || 'any'}` : `export interface Res ${c.res}`}\n
   }\n`;
 }
 
@@ -23,7 +25,7 @@ function renderCodeUnit(apiItem, config) {
     ? `/** ${apiItem.title ? `${apiItem.title} ` : ''}${apiItem.method} ${apiItem.path.replace(/\*\//gi, '{*}/')} */\n`
     : '';
 
-  return `${comment}${getDeclare(name, apiItem.codes)}`;
+  return `\n${comment}${getDeclare(name, apiItem.codes)}`;
 }
 
 function renderApiTypesTsCode(apiData, config) {

@@ -98,7 +98,7 @@ const utils = {
     return `Array<${arrIn}>`;
   },
 
-  // 结构为正常对象有key
+  // 处理返回值有key的类型
   genCodeWithFieldName(item, cItem, children, opts) {
     if (item.type !== 'array' && item.properties) {
       return utils.handleComplexValue(item, cItem, children, opts);
@@ -108,13 +108,19 @@ const utils = {
 
     if (item.type === 'array') {
       r = utils.genArrayCode(item, cItem, children, opts);
-    } else if (item.properties) {
-
     } else {
       r = utils.genExtCode(item);
     }
 
     return r;
+  },
+
+  // 处理返回值无key的类型
+  genCodeWithoutFieldName(item, cItem, children, opts) {
+    if (item.type === 'array') {
+      return utils.genArrayCode(item, cItem, children, opts);
+    }
+    return utils.getTsType(item.type);
   },
 
   // 处理属性值是对象或者对象数组
@@ -129,6 +135,11 @@ const utils = {
     // 属性相等基本可以认为是同一个dto
     // 完整的对象属性还没有确定，但是dto的名称已经被上一级引用了
     let existModelName = utils.findAttrEqualModel(item.properties, opts.models);
+
+    // 属性完全一致认为是同一个dto
+    if (item.properties && cItem?.properties && deepEqual(item.properties.map(p => p.name), cItem.properties.map(p => p.name))) {
+      existModelName = cItem.modelName;
+    }
 
     if (existModelName) {
       return existModelName;
@@ -146,7 +157,7 @@ const utils = {
   },
 
   generateModelName(item) {
-    let n = item.name;
+    let n = item.name ?? item.oName;
 
     return firstCharUpper(n ? `${n}VO` : 'anonymousDto');
   },
@@ -218,7 +229,13 @@ const utils = {
           dto[fieldName] = opts.config.comment && item.description ? `${v}${CONCAT_DELIMITER}${trimBlank(item.description)}` : v;
         }
       } else {
-        // todo no fieldName
+        const r = utils.genCodeWithoutFieldName(item, cItem, children, opts);
+
+        if (typeof r === 'string') {
+          dto = r;
+        } else {
+          return r;
+        }
       }
     }
 
