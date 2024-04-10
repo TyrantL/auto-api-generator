@@ -128,7 +128,6 @@ function formatRequest(apiInfo, schemas) {
       });
     });
     apiInfo.query = query;
-    apiInfo.title = getTypeName(apiInfo.description);
   }
 
   if (apiInfo.requestBody) {
@@ -177,69 +176,85 @@ function getContentFromSchemas(schemas, ref, apiInfo) {
     };
   });
 
-
   return body;
 }
 
 function getResponseFromSchemas(schemas, ref, apiInfo) {
-  const targetComponent = ref.startsWith('#/components/schemas/') ? ref.split('/')[3] : ref;
+  let task = ref;
   let res = [];
+  const stack = [];
+  const map = {};
+  let mapKey = 0;
+  // 处理循环引用
+  let existSchemaMap = {};
 
-  if (!schemas[targetComponent]) {
-    // todo 文档中出参有异常
-    console.error(chalk.red(`[${apiInfo.path}]接口出参异常，请联系后端排查`));
-    return res;
-  }
-  const { data } = schemas[targetComponent].properties;
+  while (task) {
+    let target = '';
+    let taskKey = null;
 
-  if (!data.type) {
-    // 递归获取参数模板，模板在data.$ref中
-    res = parseBody(schemas, data.$ref, apiInfo);
-  } else if (data.type === 'array' && data.items.$ref) {
-    // 递归获取参数模板，模板在data.items中
-    res = {
-      name: null,
-      type: 'array',
-      description: data.description,
-      items: parseBody(schemas, data.items.$ref, apiInfo),
-    };
-  } else {
-    res.push({
-      description: data.description,
-      type: data.type,
-      name: null,
-      items: data.items?.type ?? null,
-    });
-  }
-
-  return res;
-}
-
-function parseBody(schemas, ref, apiInfo) {
-  let res = [];
-  const targetComponent = ref.startsWith('#/components/schemas/') ? ref.split('/')[3] : ref;
-
-  if (!schemas[targetComponent]) {
-    // todo 文档中出参有异常
-    console.error(chalk.red(`[${apiInfo.path}]接口出参异常，请联系后端排查`));
-    return res;
-  }
-  const properties = schemas[targetComponent].properties;
-
-  res = Object.entries(properties).map(([key, obj]) => {
-    let attributes = [];
-    if (obj.$ref) {
-      attributes = parseBody(schemas, obj.$ref, apiInfo);
+    if (typeof task === 'string') {
+      target = task;
+    } else {
+      target = task.target;
+      taskKey = task.key;
     }
-    return {
-      name: key,
-      description: obj.description,
-      type: obj.type,
-      items: obj.items?.type ?? null,
-      attributes,
-    };
-  });
 
+    const name = target.startsWith('#/components/schemas/') ? target.split('/')[3] : target;
+
+    const schema = schemas[name];
+
+    if (!schema) {
+      // todo 文档中出参有异常
+      console.error(chalk.red(`[${apiInfo.path}]接口出参异常，请联系后端排查`));
+      task = stack.shift();
+      continue;
+    }
+
+    let result = [];
+
+    if (existSchemaMap[name]) {
+      result = existSchemaMap[name];
+    } else {
+      existSchemaMap[name] = result;
+
+      Object.entries(schema.properties || []).forEach(([key, obj]) => {
+        // 是否是非基础类型的数组
+        const isNonPrimitiveElementArray = obj.type === 'array' && obj.items.$ref;
+        if (obj.$ref || isNonPrimitiveElementArray) {
+          const t = isNonPrimitiveElementArray ? obj.items.$ref : obj.$ref;
+          stack.push({ key: mapKey, target: t });
+          map[mapKey] = [];
+          result.push({
+            name: key,
+            oName: isNonPrimitiveElementArray ? '' : '', // todo
+            description: obj.description,
+            required: obj.required ?? false,
+            type: obj.type,
+            subtype: obj.items?.type ?? null,
+            properties: map[mapKey],
+          });
+          mapKey++;
+        } else {
+          result.push({
+            name: key,
+            description: obj.description,
+            required: obj.required ?? false,
+            type: obj.type,
+            subtype: obj.items?.type ?? null,
+            properties: null,
+          });
+        }
+      });
+    }
+
+    if (taskKey !== null) {
+      map[taskKey].push(...result)
+    } else {
+      res = res.concat(result);
+    }
+
+    task = stack.shift();
+  }
   return res;
 }
 
