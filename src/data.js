@@ -230,7 +230,7 @@ function getResponseFromSchemas(schemas, ref, apiInfo) {
             description: obj.description,
             required: obj.required ?? false,
             type: obj.type,
-            subtype: obj.items?.type ?? null,
+            subTypes: obj.items?.type ?? null,
             properties: map[mapKey],
           });
           mapKey++;
@@ -240,7 +240,7 @@ function getResponseFromSchemas(schemas, ref, apiInfo) {
             description: obj.description,
             required: obj.required ?? false,
             type: obj.type,
-            subtype: obj.items?.type ?? null,
+            subType: obj.items?.type ?? null,
             properties: null,
           });
         }
