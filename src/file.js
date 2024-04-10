@@ -38,7 +38,7 @@ async function generateCodeFile(data, config, opt) {
 function prettierCode(code) {
   return prettier.format(code, {
     tabWidth: 2,
-    printWidth: 250,
+    printWidth: 80,
     singleQuote: true,
     parser: 'babel-ts',
   });

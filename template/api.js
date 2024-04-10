@@ -1,16 +1,19 @@
 const { firstCharUpper } = require('../utils/index');
+const utils = require('../utils/ts');
 
-function renderCodeUnit(apiItem, config) {
-  return `${apiItem.apiName}: (req, options={}) => axios({...config.${apiItem.apiName}, data: req, ...options }),\n`;
+function genReqFieldName(req) {
+  return (!req || req === 'any') ? 'req?' : utils.getTsPropertyName({name: 'req', required: true})
 }
 
-// function renderTsCodeUnit(apiItem, config) {
-//   const name = firstCharUpper(apiItem.apiName);
-//
-//   const comment = config.comment && apiItem.description ? `/** ${apiItem.description} */\n` : '';
-//
-//   const context = `${apiItem.apiName}: `;
-// }
+function renderCodeUnit(apiItem, config) {
+  const name = firstCharUpper(apiItem.apiName);
+  const comment = config.comment && apiItem.description ? `/** ${apiItem.description} */\n` : '';
+  return (
+    `${comment}${apiItem.apiName}: (${genReqFieldName(apiItem.codes.req)}: AT.ET<AT.${name}.Req>, option:object = {}): Promise<AT.ET<AT.${name}.Res>> => {
+        return axios({data: req, ...config.${apiItem.apiName}, ...option });
+    },\n`
+  );
+}
 
 function renderApiCallJsCode(apiData, config) {
   let content = '';
