@@ -39,7 +39,7 @@ module.exports = {
     projects: [
         {
             projectName: 'xxx',
-            basePath: 'xxx',
+            baseUrl: 'xxx',
             //...
         }
     ]
