@@ -12,7 +12,7 @@ async function generateCode(opts) {
   for (let i = 0; i < projects.length; i++) {
     if (projects[i].projectName) {
       const curProject = projects[i];
-      const { apis, responseInfoMap } = await getApiData(curProject);
+      const { apis, responseInfoMap, basePath } = await getApiData(curProject);
 
       if (apis.length === 0) {
         console.error(chalk.red(`projectName:【${chalk.blueBright(curProject.projectName)}】获取到的接口数据为空，请确认配置是否正确或者接口服务正常`));
@@ -20,6 +20,7 @@ async function generateCode(opts) {
 
       const config ={
         output: opts.output,
+        basePath: `/${basePath}`,
         ...curProject,
       };
 

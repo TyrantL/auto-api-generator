@@ -27,6 +27,7 @@ async function getApiData(config) {
   const ret = {
     apis: [],
     responseInfoMap: {},
+    basePath: '',
   };
   if (success) {
     const { data } = await axios.get(path, {
@@ -37,10 +38,10 @@ async function getApiData(config) {
       throw new Error(`${path}接口异常，请检查该接口文档状态是否正常`);
     });
 
-    const { paths = [], components: { schemas = {} } } = data;
+    const { paths = [], components: { schemas = {} }, basePath } = data;
 
+    ret.basePath = basePath;
     ret.apis = paths;
-    // ret.responseInfoMap = schemas;
     ret.responseInfoMap = Object.values(schemas).reduce((acc, cur) => {
       acc[cur.title] = cur;
       return acc;
