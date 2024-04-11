@@ -1,5 +1,5 @@
-# auto-api-generator
-auto-api-generator是一个高效能的工具，专门用来自动化创建API接口及其相关文档
+# smart-api-generator
+mart-api-generator是一个高效能的工具，专门用来自动化创建API接口及其相关文档
 
 ## 功能点
 
@@ -11,13 +11,13 @@ auto-api-generator是一个高效能的工具，专门用来自动化创建API�
 ## 安装
 ```
 // npm
-npm install auto-api-generator -D
+npm install smart-api-generator -D
 
 // yarn
-yarn add auto-api-generator -D
+yarn add smart-api-generator -D
 
 // pnpm
-pnpm install auto-api-generator -D
+pnpm install smart-api-generator -D
 ```
 
 ## 使用步骤
@@ -27,7 +27,7 @@ pnpm install auto-api-generator -D
 ```
 "scripts": {
         ......
-    "api": "cross-env auto-api-generator create --config /path/to/.api.config.js"
+    "api": "cross-env smart-api create --config /path/to/.api.config.js"
 },
 ```
 
