@@ -46,7 +46,7 @@ module.exports = {
 }
 ```
 
-3、在根目录种运行命令
+3、在根目录中运行命令
 ```
 npm run api
 ```
@@ -109,9 +109,9 @@ npm run api
 </tr>
 <tr>
 <td>basePath</td>
-<td>接口统一前缀，默认会使用swagger文档种的basePath字段，如果文档与实际有差异，请手动配置</td>
+<td>接口统一前缀，默认会使用swagger文档中的basePath字段，如果文档与实际有差异，请手动配置</td>
 <td>false</td>
-<td>swagger文档主页种的basePath字段</td>
+<td>swagger文档主页中的basePath字段</td>
 <td>1.0.0</td>
 </tr>
 <tr>
