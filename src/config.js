@@ -5,7 +5,7 @@ function mergeConfig(config) {
   return {
     ...defaultConfig,
     ...config,
-  }
+  };
 }
 
-module.exports = mergeConfig();
+module.exports = mergeConfig;
