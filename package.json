@@ -8,12 +8,12 @@
     "url": "https://github.com/TyrantL/auto-api-generator.git"
   },
   "bin": {
-    "auto-api-generator": "./bin/index.js create"
+    "auto-api-generator": "./bin/index.js"
   },
   "scripts": {
     "api": "node bin/index.js create --config ./.api.config.js"
   },
-  "keywords": [],
+  "keywords": ["api generate"],
   "author": "Leon",
   "license": "ISC",
   "dependencies": {
@@ -24,5 +24,11 @@
     "pinyin": "^3.0.0",
     "prettier": "^2.0.5",
     "qs": "^6.12.0"
-  }
+  },
+  "files": [
+    "bin",
+    "src",
+    "template",
+    "utils"
+  ]
 }
