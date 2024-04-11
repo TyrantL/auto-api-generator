@@ -76,95 +76,95 @@ const utils = {
 
   /**
    * 获取 ts 类型属性名
-   * @param item 包含属性名的对象，该对象应至少包含 name 和 required 属性
+   * @param prop 包含属性名的对象，该对象应至少包含 name 和 required 属性
    * @param tsNotStrict 是否为非严格 TypeScript 模式，true 表示不严格，false 表示严格
    * @returns 返回属性名字符串，如果属性是非必需的（即不标记为 required），并且 tsNotStrict 为 false，则在属性名后添加 ?
    */
-  getTsPropertyName(item, tsNotStrict) {
+  getTsPropertyName(prop, tsNotStrict) {
     // 检查属性名中是否包含'-', 如果包含，则将其用单引号包裹，以避免 TS 格式化时的错误
-    const n = item.name.indexOf('-') !== -1 ? `'${item.name}'` : item.name;
+    const n = prop.name.indexOf('-') !== -1 ? `'${prop.name}'` : prop.name;
 
     // 根据 tsNotStrict 和 item.required 来决定返回的属性名是否可选
-    return tsNotStrict ? n : item.required ? n : `${n}?`;
+    return tsNotStrict ? n : prop.required ? n : `${n}?`;
   },
 
-  genExtCode(item) {
+  genExtCode(prop) {
     const typeMap = {
       object: DEFAULT_TYPE,
       array: `Array<${DEFAULT_TYPE}>`,
     };
 
-    return isBaseType(item.type) ? utils.getTsType(item.type) : typeMap[item.type] || DEFAULT_TYPE;
+    return isBaseType(prop.type) ? utils.getTsType(prop.type) : typeMap[prop.type] || DEFAULT_TYPE;
   },
 
-  genArrayCode(item, cItem, children, opts) {
+  genArrayCode(prop, curItem, children, opts) {
     let arrIn = DEFAULT_TYPE;
 
-    arrIn = isBaseType(item.subType) ? utils.getTsType(item.subType) : utils.handleComplexValue(item, cItem, children, opts);
+    arrIn = isBaseType(prop.subType) ? utils.getTsType(prop.subType) : utils.handleComplexValue(prop, curItem, children, opts);
 
     return `Array<${arrIn}>`;
   },
 
   // 处理返回值有key的类型
-  genCodeWithFieldName(item, cItem, children, opts) {
-    if (item.type !== 'array' && item.properties) {
-      return utils.handleComplexValue(item, cItem, children, opts);
+  genCodeWithFieldName(prop, curItem, children, opts) {
+    if (prop.type !== 'array' && prop.properties) {
+      return utils.handleComplexValue(prop, curItem, children, opts);
     }
 
     let r = '';
 
-    if (item.type === 'array') {
-      r = utils.genArrayCode(item, cItem, children, opts);
+    if (prop.type === 'array') {
+      r = utils.genArrayCode(prop, curItem, children, opts);
     } else {
-      r = utils.genExtCode(item);
+      r = utils.genExtCode(prop);
     }
 
     return r;
   },
 
   // 处理返回值无key的类型
-  genCodeWithoutFieldName(item, cItem, children, opts) {
-    if (item.type === 'array') {
-      return utils.genArrayCode(item, cItem, children, opts);
+  genCodeWithoutFieldName(prop, curItem, children, opts) {
+    if (prop.type === 'array') {
+      return utils.genArrayCode(prop, curItem, children, opts);
     }
-    return utils.getTsType(item.type);
+    return utils.getTsType(prop.type);
   },
 
   // 处理属性值是对象或者对象数组
-  handleComplexValue(item, cItem, children, opts) {
-    item.properties = item.properties || [];
+  handleComplexValue(prop, curItem, children, opts) {
+    prop.properties = prop.properties || [];
     // 当返回是数组或者基本类型、Map时，第一层的name是不存在的
-    if (!item.name && item.type !== 'array') {
-      return utils.travelForGenerateCode(item.properties, cItem, opts);
+    if (!prop.name && prop.type !== 'array') {
+      return utils.travelForGenerateCode(prop.properties, curItem, opts);
     }
 
     // 根据properties的属性值去models里面校验是否存在属性都相等的dto
     // 属性相等基本可以认为是同一个dto
     // 完整的对象属性还没有确定，但是dto的名称已经被上一级引用了
-    let existModelName = utils.findAttrEqualModel(item.properties, opts.models);
+    let existModelName = utils.findAttrEqualModel(prop.properties, opts.models);
 
     // 属性完全一致认为是同一个dto
-    if (item.properties && cItem?.properties && deepEqual(item.properties.map(p => p.name), cItem.properties.map(p => p.name))) {
-      existModelName = cItem.modelName;
+    if (prop.properties && curItem?.properties && deepEqual(prop.properties.map(p => p.name), curItem.properties.map(p => p.name))) {
+      existModelName = curItem.modelName;
     }
 
     if (existModelName) {
       return existModelName;
     }
 
-    let modelName = utils.generateModelName(item);
+    let modelName = utils.generateModelName(prop);
 
     children.push({
-      pItem: item,
+      pItem: prop,
       modelName,
-      properties: item.properties,
+      properties: prop.properties,
     });
 
     return modelName;
   },
 
-  generateModelName(item) {
-    let n = item.name ?? item.oName;
+  generateModelName(prop) {
+    let n = prop.name;
 
     return firstCharUpper(n ? `${n}VO` : 'anonymousDto');
   },
@@ -215,7 +215,7 @@ const utils = {
     return match ? match.name : null;
   },
 
-  travelForGenerateCode(sourceData, cItem, opts) {
+  travelForGenerateCode(sourceData, curItem, opts) {
     if (sourceData.length === 0) {
       return {
         dto: DEFAULT_TYPE,
@@ -227,16 +227,16 @@ const utils = {
     let dto = {};
 
     for (let i = 0; i < sourceData.length; i++) {
-      const item = sourceData[i];
-      const fieldName = item.name ? utils.getTsPropertyName(item, opts.config.tsNotStrict) : '';
+      const prop = sourceData[i];
+      const fieldName = prop.name ? utils.getTsPropertyName(prop, opts.config.tsNotStrict) : '';
 
       if (fieldName) {
         if (utils.trimFieldName(fieldName)) {
-          const v = utils.genCodeWithFieldName(item, cItem, children, opts);
-          dto[fieldName] = opts.config.comment && item.description ? `${v}${CONCAT_DELIMITER}${trimBlank(item.description)}` : v;
+          const v = utils.genCodeWithFieldName(prop, curItem, children, opts);
+          dto[fieldName] = opts.config.comment && prop.description ? `${v}${CONCAT_DELIMITER}${trimBlank(prop.description)}` : v;
         }
       } else {
-        const r = utils.genCodeWithoutFieldName(item, cItem, children, opts);
+        const r = utils.genCodeWithoutFieldName(prop, curItem, children, opts);
 
         if (typeof r === 'string') {
           dto = r;
