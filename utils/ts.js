@@ -74,11 +74,18 @@ const utils = {
     return (str || '').replace(/[{}]/ig, '');
   },
 
-  getTsPropertyName(item) {
-    // 对于`xxx-xxx`类型的字段，需要使用''包起来，否则TS格式化的时候会报错
+  /**
+   * 获取 ts 类型属性名
+   * @param item 包含属性名的对象，该对象应至少包含 name 和 required 属性
+   * @param tsNotStrict 是否为非严格 TypeScript 模式，true 表示不严格，false 表示严格
+   * @returns 返回属性名字符串，如果属性是非必需的（即不标记为 required），并且 tsNotStrict 为 false，则在属性名后添加 ?
+   */
+  getTsPropertyName(item, tsNotStrict) {
+    // 检查属性名中是否包含'-', 如果包含，则将其用单引号包裹，以避免 TS 格式化时的错误
     const n = item.name.indexOf('-') !== -1 ? `'${item.name}'` : item.name;
 
-    return item.required ? n : `${n}?`;
+    // 根据 tsNotStrict 和 item.required 来决定返回的属性名是否可选
+    return tsNotStrict ? n : item.required ? n : `${n}?`;
   },
 
   genExtCode(item) {
@@ -221,7 +228,7 @@ const utils = {
 
     for (let i = 0; i < sourceData.length; i++) {
       const item = sourceData[i];
-      const fieldName = item.name ? utils.getTsPropertyName(item) : '';
+      const fieldName = item.name ? utils.getTsPropertyName(item, opts.config.tsNotStrict) : '';
 
       if (fieldName) {
         if (utils.trimFieldName(fieldName)) {

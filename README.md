@@ -1,4 +1,8 @@
 # smart-api-generator
+
+![npm (scoped)](https://img.shields.io/npm/v/smart-api-generator)
+[![Downloads](https://img.shields.io/npm/dm/smart-api-generator)](https://www.npmjs.com/package/smart-api-generator)
+
 mart-api-generator是一个高效能的工具，专门用来自动化创建API接口及其相关文档
 
 ## 功能点
@@ -59,6 +63,7 @@ npm run api
 <th style="width: 150px">参数</th>
 <th style="width: 250px">说明</th>
 <th style="width: 150px">必填</th>
+<th style="width: 100px">类型</th>
 <th style="width: 200px">默认值</th>
 <th style="width: 150px">版本</th>
 </tr>
@@ -68,6 +73,7 @@ npm run api
 <td>output</td>
 <td>接口文件输出目录</td>
 <td>true</td>
+<td>string</td>
 <td>-</td>
 <td>1.0.0</td>
 </tr>
@@ -75,6 +81,7 @@ npm run api
 <td>host</td>
 <td>swagger平台地址</td>
 <td>false</td>
+<td>string</td>
 <td>https://letao.cnstrong.cn</td>
 <td>1.0.0</td>
 </tr>
@@ -82,6 +89,7 @@ npm run api
 <td>projects</td>
 <td>接口文档配置</td>
 <td>true</td>
+<td>array</td>
 <td>-</td>
 <td>1.0.0</td>
 </tr>
@@ -95,6 +103,7 @@ npm run api
 <th style="width: 150px">参数</th>
 <th style="width: 250px">说明</th>
 <th style="width: 150px">必填</th>
+<th style="width: 100px">类型</th>
 <th style="width: 200px">默认值</th>
 <th style="width: 150px">版本</th>
 </tr>
@@ -104,6 +113,7 @@ npm run api
 <td>projectName</td>
 <td>项目名称,对应swagger接口文档地址，如：<span>https://letao.cnstrong.cn/letao-official-document-center/doc.html#/home</span> 中，projectName 为 letao-official-document-center</td>
 <td>true</td>
+<td>string</td>
 <td>-</td>
 <td>1.0.0</td>
 </tr>
@@ -111,6 +121,7 @@ npm run api
 <td>basePath</td>
 <td>接口统一前缀，默认会使用swagger文档中的basePath字段，如果文档与实际有差异，请手动配置</td>
 <td>false</td>
+<td>string</td>
 <td>swagger文档主页中的basePath字段</td>
 <td>1.0.0</td>
 </tr>
@@ -118,6 +129,7 @@ npm run api
 <td>comment</td>
 <td>是否需要生成注释</td>
 <td>false</td>
+<td>boolean</td>
 <td>true</td>
 <td>1.0.0</td>
 </tr>
@@ -125,8 +137,17 @@ npm run api
 <td>folderName</td>
 <td>生成文件夹的名称</td>
 <td>false</td>
+<td>string</td>
 <td>默认使用 projectName</td>
 <td>1.0.0</td>
+</tr>
+<tr>
+<td>tsNotStrictInclude</td>
+<td>生成的ts代码时，控制请求参数/返回结果是否严格模式,req 参数部分关闭严格模式，res 返回部分关闭严格模式 </td>
+<td>false</td>
+<td>string[]</td>
+<td>['res']</td>
+<td>1.1.0</td>
 </tr>
 </tbody>
 </table>

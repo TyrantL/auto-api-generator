@@ -88,7 +88,7 @@ function isBaseType(type) {
 }
 
 function getTypeName(name) {
-  return pinyin('BaseConfigEditRequest', { style: 'normal' })
+  return pinyin(name, { style: 'normal' })
     .map(item => firstCharUpper(item[0]))
     .join('')
     .replace(/[^a-zA-Z]/ig, '')

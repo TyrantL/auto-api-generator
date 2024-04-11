@@ -2,10 +2,14 @@ const utils = require('../utils/ts');
 
 function generateTsTypesCode(apiData, config) {
   const models = [];
+  // 设置ts类型解析模式，用于解析request
+  config.tsNotStrict = config.tsNotStrictInclude.includes('req');
   // 解析query入参
   const params = utils.transform2TsTypesCode(apiData.query, config, apiData);
   // 解析body入参
   const data = utils.transform2TsTypesCode(apiData.body, config, apiData, params.models);
+  // 设置ts类型解析模式，用于解析response
+  config.tsNotStrict = config.tsNotStrictInclude.includes('res');
   // 解析 response
   const res = utils.transform2TsTypesCode(apiData.response, config, apiData, [...params.models, ...data.models]);
 
