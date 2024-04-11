@@ -14,7 +14,7 @@
     "api": "node bin/index.js create --config ./.api.config.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Leon",
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.8",

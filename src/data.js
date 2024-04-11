@@ -128,9 +128,7 @@ function formatRequest(apiInfo, schemas) {
       });
     });
     apiInfo.query = query;
-  }
-
-  if (apiInfo.requestBody) {
+  } else if (apiInfo.requestBody) {
     const { content } = apiInfo.requestBody;
     const contentType = Object.keys(content)[0];
 
@@ -139,8 +137,12 @@ function formatRequest(apiInfo, schemas) {
     } else {
       apiInfo.headersJson = contentType;
     }
-
-    apiInfo.body = getContentFromSchemas(schemas, content[contentType].schema.$ref, apiInfo);
+    try {
+      apiInfo.body = getContentFromSchemas(schemas, content[contentType].schema.$ref, apiInfo);
+    } catch (e) {
+      console.error(chalk.red(`[${chalk.blue(apiInfo.path)}]接口入参异常被捕获，请联系后端排查`));
+      apiInfo.body = [];
+    }
   }
 }
 
