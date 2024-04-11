@@ -1,6 +1,6 @@
 {
   "name": "smart-api-generator",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "auto-api-generator是一个高效能的工具，专门用来自动化创建API接口及其相关文档",
   "main": "src/index.js",
   "repository": {
@@ -11,7 +11,8 @@
     "smart-api": "./bin/index.js"
   },
   "scripts": {
-    "api": "node bin/index.js create --config ./.api.config.js"
+    "api": "node bin/index.js create --config ./.api.config.js",
+    "release": "standard-version"
   },
   "keywords": [
     "api generate"
@@ -32,5 +33,8 @@
     "src",
     "template",
     "utils"
-  ]
+  ],
+  "devDependencies": {
+    "standard-version": "^9.5.0"
+  }
 }
