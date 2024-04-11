@@ -102,7 +102,7 @@ npm run api
 <tbody>
 <tr>
 <td>projectName</td>
-<td>项目名称,对应swagger接口文档地址，如:https://letao.cnstrong.cn/letao-official-document-center/doc.html#/home中，projectName 为 letao-official-document-center</td>
+<td>项目名称,对应swagger接口文档地址，如：<span>https://letao.cnstrong.cn/letao-official-document-center/doc.html#/home</span> 中，projectName 为 letao-official-document-center</td>
 <td>true</td>
 <td>-</td>
 <td>1.0.0</td>
@@ -130,13 +130,4 @@ npm run api
 </tr>
 </tbody>
 </table>
-
-<style>
-table {
-    width: 100%;
-}
-
-
-
-</style>
 
