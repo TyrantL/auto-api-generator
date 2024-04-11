@@ -13,7 +13,9 @@
   "scripts": {
     "api": "node bin/index.js create --config ./.api.config.js"
   },
-  "keywords": ["api generate"],
+  "keywords": [
+    "api generate"
+  ],
   "author": "Leon",
   "license": "ISC",
   "dependencies": {
