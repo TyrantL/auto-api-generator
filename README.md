@@ -39,7 +39,7 @@ module.exports = {
     projects: [
         {
             projectName: 'xxx',
-            baseUrl: 'xxx',
+            basePath: 'xxx',
             //...
         }
     ]
@@ -108,17 +108,17 @@ npm run api
 <td>1.0.0</td>
 </tr>
 <tr>
-<td>baseUrl</td>
+<td>basePath</td>
 <td>接口统一前缀，默认会使用swagger文档种的basePath字段，如果文档与实际有差异，请手动配置</td>
 <td>false</td>
-<td>-</td>
+<td>swagger文档主页种的basePath字段</td>
 <td>1.0.0</td>
 </tr>
 <tr>
 <td>comment</td>
 <td>是否需要生成注释</td>
 <td>false</td>
-<td>false</td>
+<td>true</td>
 <td>1.0.0</td>
 </tr>
 <tr>
