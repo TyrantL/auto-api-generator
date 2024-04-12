@@ -7,7 +7,7 @@ async function getRequestUrl(config) {
   const host = config.host || 'https://letao.cnstrong.cn';
   const path = `${host}/${config.projectName}/swagger-resources`;
   let url = '';
-  const data = await axios.get(path).catch(err => {
+  const data = await axios.get(path).catch(() => {
     console.error(chalk.red(`${chalk.blueBright(path)} 接口异常，请检查【projectName】是否配置正确，或者该接口文档状态是否正常`));
   });
 
@@ -23,31 +23,213 @@ async function getRequestUrl(config) {
 
 async function getApiData(config) {
   const { path, success } = await getRequestUrl(config);
-
   const ret = {
     apis: [],
-    responseInfoMap: {},
     basePath: '',
   };
+
   if (success) {
-    const { data } = await axios.get(path, {
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    }).catch(err => {
+    const { data } = await axios.get(path, {}).catch(() => {
       throw new Error(`${path}接口异常，请检查该接口文档状态是否正常`);
     });
 
-    const { paths = [], components: { schemas = {} }, basePath } = data;
-
-    ret.basePath = basePath;
-    ret.apis = paths;
-    ret.responseInfoMap = Object.values(schemas).reduce((acc, cur) => {
-      acc[cur.title] = cur;
-      return acc;
-    }, {});
+    ret.basePath = data.basePath;
+    ret.apis = generateStandardApiData(data);
   }
   return ret;
+}
+
+// 将接口返回的数据转化为标准格式数据
+function generateStandardApiData(originData) {
+  const ret = [];
+  const paths = originData.paths;
+  const schemas = originData.components?.schemas ?? {};
+  const map = Object.values(schemas).reduce((acc, cur) => {
+    acc[cur.title] = cur;
+    return acc;
+  }, {});
+
+  Object.entries(paths).forEach(([path, context]) => {
+    // 兼容 restful 风格
+    const methods = Object.keys(context);
+
+    methods.forEach((method) => {
+      const api = context[method];
+
+      const { query, body, opts } = parseRequest(api, map, path);
+
+      const apiInfo = {
+        id: api.operationId,
+        path,
+        title: api.summary,
+        method: method.toLowerCase(),
+        query,
+        body,
+        response: parseResponse(api, map, path),
+        ...opts,
+      };
+
+      ret.push(apiInfo);
+    });
+  });
+
+  return ret;
+}
+
+//解析入参，入参有两种情况 parameters(query) 和 requestBody(body)
+function parseRequest(api, map, path) {
+  let query = null;
+  let body = null;
+  const opts = {};
+
+  if (api.parameters) {
+    query = api.parameters.map((prop) => ({
+      name: prop.name,
+      description: prop.description,
+      required: prop.required,
+      type: prop.schema?.type ?? 'any',
+      subType: prop.schema?.items?.type ?? null,
+      properties: null,
+    }));
+  } else if (api.requestBody) {
+    const { content } = api.requestBody;
+    const contentType = Object.keys(content)[0];
+
+    if (contentType === 'application/json') {
+      opts.headersJson = 'application/json; charset=utf-8';
+    } else {
+      opts.headersJson = contentType;
+    }
+
+    try {
+      body = getBodyFromSchemas(path, map, content[contentType].schema.$ref);
+    } catch (e) {
+      console.error(chalk.red(`[${chalk.blue(api.path)}]接口入参异常被捕获，请联系后端排查`));
+    }
+  }
+
+  return { query, body, opts };
+}
+
+// 解析出参
+function parseResponse(api, map, path) {
+  if (!api.responses[200].content) {
+    console.error(chalk.red(`[${api.path}]接口没有出参，请联系后端排查`));
+    return null;
+  }
+
+  return getResponseFromSchemas(path, map, api.responses[200].content['*/*'].schema.$ref);
+}
+
+function getBodyFromSchemas(path, schemas, ref) {
+  const targetComponent = ref.startsWith('#/components/schemas/') ? ref.split('/')[3] : ref;
+
+  let body = null;
+
+  if (!schemas[targetComponent]) {
+    console.error(chalk.red(`[${path.path}]接口入参异常，请联系后端排查`));
+    return body;
+  }
+
+  body = Object.entries(schemas[targetComponent].properties).map(([key, obj]) => {
+    let properties = null;
+
+    if (obj.$ref) {
+      properties = getBodyFromSchemas(path, schemas, obj.$ref);
+    }
+
+    if (obj.type === 'array' && obj.items?.$ref) {
+      properties = getBodyFromSchemas(path, schemas, obj.items.$ref);
+    }
+
+    return {
+      name: key,
+      description: obj.description,
+      required: obj.required ?? false,
+      type: obj.type,
+      subType: obj.items?.type ?? null,
+      properties,
+    };
+  });
+
+  return body;
+}
+
+function getResponseFromSchemas(path, _map, ref) {
+  let task = ref;
+  let res = [];
+  const stack = [];
+  const map = {};
+  let mapKey = 0;
+  // 处理循环引用
+  let existSchemaMap = {};
+
+  while (task) {
+    let target = '';
+    let taskKey = null;
+
+    if (typeof task === 'string') {
+      target = task;
+    } else {
+      target = task.target;
+      taskKey = task.key;
+    }
+
+    const name = target.startsWith('#/components/schemas/') ? target.split('/')[3] : target;
+
+    const schema = _map[name];
+
+    if (!schema) {
+      console.error(chalk.red(`[${path}]接口出参异常，请联系后端排查`));
+      task = stack.shift();
+      continue;
+    }
+
+    let result = [];
+
+    if (existSchemaMap[name]) {
+      result = existSchemaMap[name];
+    } else {
+      existSchemaMap[name] = result;
+
+      Object.entries(schema.properties || []).forEach(([key, obj]) => {
+        // 是否是非基础类型的数组
+        const isNonPrimitiveElementArray = obj.type === 'array' && obj.items.$ref;
+        if (obj.$ref || isNonPrimitiveElementArray) {
+          const t = isNonPrimitiveElementArray ? obj.items.$ref : obj.$ref;
+          stack.push({ key: mapKey, target: t });
+          map[mapKey] = [];
+          result.push({
+            name: key,
+            description: obj.description,
+            required: obj.required ?? false,
+            type: obj.type,
+            subTypes: obj.items?.type ?? null,
+            properties: map[mapKey],
+          });
+          mapKey++;
+        } else {
+          result.push({
+            name: key,
+            description: obj.description,
+            required: obj.required ?? false,
+            type: obj.type,
+            subType: obj.items?.type ?? null,
+            properties: null,
+          });
+        }
+      });
+    }
+
+    if (taskKey !== null) {
+      map[taskKey].push(...result);
+    } else {
+      res = res.concat(result);
+    }
+
+    task = stack.shift();
+  }
+  return res;
 }
 
 // 接口重新生成与重复校验
@@ -84,183 +266,5 @@ function formatApiData(apis, config) {
   return apis;
 }
 
-function formatData(originData) {
-  const { apis, responseInfoMap } = originData;
-
-  return Object.entries(apis).map(([path, context]) => {
-    const method = Object.keys(context)[0];
-
-    const apiInfo = context[method];
-    apiInfo.path = path;
-    apiInfo.method = method;
-    apiInfo.query = null;
-    apiInfo.body = null;
-    apiInfo.response = null;
-
-    formatRequest(apiInfo, responseInfoMap);
-
-    formatResponse(apiInfo, responseInfoMap);
-
-    return apiInfo;
-  });
-}
-
-function formatResponse(apiInfo, schemas) {
-  if (!apiInfo.responses[200].content) {
-    console.error(chalk.red(`[${apiInfo.path}]接口没有出参，请联系后端排查`));
-    return;
-  }
-
-  apiInfo.response = getResponseFromSchemas(schemas, apiInfo.responses[200].content['*/*'].schema.$ref, apiInfo);
-}
-
-//处理入参，入参有两种情况 parameters(query) 和 requestBody(body)
-function formatRequest(apiInfo, schemas) {
-  const query = [];
-  if (apiInfo.parameters) {
-    apiInfo.parameters.forEach((item) => {
-      query.push({
-        name: item.name,
-        description: item.description,
-        required: item.required,
-        type: item.schema?.type ?? 'any',
-        subType: item.schema?.items?.type ?? null,
-        properties: null,
-      });
-    });
-    apiInfo.query = query;
-  } else if (apiInfo.requestBody) {
-    const { content } = apiInfo.requestBody;
-    const contentType = Object.keys(content)[0];
-
-    if (contentType === 'application/json') {
-      apiInfo.headersJson = 'application/json; charset=utf-8';
-    } else {
-      apiInfo.headersJson = contentType;
-    }
-    try {
-      apiInfo.body = getContentFromSchemas(schemas, content[contentType].schema.$ref, apiInfo);
-    } catch (e) {
-      console.error(chalk.red(`[${chalk.blue(apiInfo.path)}]接口入参异常被捕获，请联系后端排查`));
-      apiInfo.body = [];
-    }
-  }
-}
-
-function getContentFromSchemas(schemas, ref, apiInfo) {
-  const targetComponent = ref.startsWith('#/components/schemas/') ? ref.split('/')[3] : ref;
-
-  let body = [];
-
-  if (!schemas[targetComponent]) {
-    // todo 文档中入参有异常
-    console.error(chalk.red(`[${apiInfo.path}]接口入参异常，请联系后端排查`));
-    return body;
-  }
-
-  body = Object.entries(schemas[targetComponent].properties).map(([key, obj]) => {
-    let properties = null;
-
-    if (obj.$ref) {
-      properties = getContentFromSchemas(schemas, obj.$ref, apiInfo);
-    }
-
-    if (obj.type === 'array' && obj.items?.$ref) {
-      properties = getContentFromSchemas(schemas, obj.items.$ref, apiInfo);
-    }
-
-    return {
-      name: key,
-      description: obj.description,
-      required: obj.required ?? false,
-      type: obj.type,
-      subType: obj.items?.type ?? null,
-      properties,
-    };
-  });
-
-  return body;
-}
-
-function getResponseFromSchemas(schemas, ref, apiInfo) {
-  let task = ref;
-  let res = [];
-  const stack = [];
-  const map = {};
-  let mapKey = 0;
-  // 处理循环引用
-  let existSchemaMap = {};
-
-  while (task) {
-    let target = '';
-    let taskKey = null;
-
-    if (typeof task === 'string') {
-      target = task;
-    } else {
-      target = task.target;
-      taskKey = task.key;
-    }
-
-    const name = target.startsWith('#/components/schemas/') ? target.split('/')[3] : target;
-
-    const schema = schemas[name];
-
-    if (!schema) {
-      // todo 文档中出参有异常
-      console.error(chalk.red(`[${apiInfo.path}]接口出参异常，请联系后端排查`));
-      task = stack.shift();
-      continue;
-    }
-
-    let result = [];
-
-    if (existSchemaMap[name]) {
-      result = existSchemaMap[name];
-    } else {
-      existSchemaMap[name] = result;
-
-      Object.entries(schema.properties || []).forEach(([key, obj]) => {
-        // 是否是非基础类型的数组
-        const isNonPrimitiveElementArray = obj.type === 'array' && obj.items.$ref;
-        if (obj.$ref || isNonPrimitiveElementArray) {
-          const t = isNonPrimitiveElementArray ? obj.items.$ref : obj.$ref;
-          stack.push({ key: mapKey, target: t });
-          map[mapKey] = [];
-          result.push({
-            name: key,
-            oName: isNonPrimitiveElementArray ? '' : '', // todo
-            description: obj.description,
-            required: obj.required ?? false,
-            type: obj.type,
-            subTypes: obj.items?.type ?? null,
-            properties: map[mapKey],
-          });
-          mapKey++;
-        } else {
-          result.push({
-            name: key,
-            description: obj.description,
-            required: obj.required ?? false,
-            type: obj.type,
-            subType: obj.items?.type ?? null,
-            properties: null,
-          });
-        }
-      });
-    }
-
-    if (taskKey !== null) {
-      map[taskKey].push(...result)
-    } else {
-      res = res.concat(result);
-    }
-
-    task = stack.shift();
-  }
-  return res;
-}
-
 exports.getApiData = getApiData;
 exports.formatApiData = formatApiData;
-exports.formatData = formatData;
