@@ -157,6 +157,14 @@ npm run api
 <td>-</td>
 <td>1.2.0</td>
 </tr>
+<tr>
+<td>tags</td>
+<td>可以只生成项目下指定分类下的接口， 如: ['user']</td>
+<td>false</td>
+<td>string[]</td>
+<td>-</td>
+<td>1.2.0</td>
+</tr>
 </tbody>
 </table>
 
