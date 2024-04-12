@@ -10,6 +10,10 @@ function generateTsTypesCode(apiData, config) {
   const data = utils.transform2TsTypesCode(apiData.body, config, apiData, params.models);
   // 设置ts类型解析模式，用于解析response
   config.tsNotStrict = config.tsNotStrictInclude.includes('res');
+  // 配合拦截器提取response中的内容
+  if (apiData.response && config.extractResponseKeys?.length) {
+    apiData.response = utils.extractResponse(apiData.response, config.extractResponseKeys)
+  }
   // 解析 response
   const res = utils.transform2TsTypesCode(apiData.response, config, apiData, [...params.models, ...data.models]);
 

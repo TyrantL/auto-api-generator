@@ -126,6 +126,8 @@ const utils = {
   genCodeWithoutFieldName(prop, curItem, children, opts) {
     if (prop.type === 'array') {
       return utils.genArrayCode(prop, curItem, children, opts);
+    } else if (prop.properties) {
+      return utils.handleComplexValue(prop, curItem, children, opts);
     }
     return utils.getTsType(prop.type);
   },
@@ -294,6 +296,48 @@ const utils = {
       code: utils.startTravel(sourceData, { config, apiData, models }),
       models,
     };
+  },
+
+  // 通过keys提取接口返回结构，应对axios拦截器对请求返回做提取的场景
+  extractResponse(originResponse, keys) {
+    if (keys.length === 0 || originResponse.length === 0) {
+      return originResponse;
+    }
+
+    function extract(data, pName, k) {
+      if (!data || data.length === 0) {
+        return;
+      }
+
+      for (let i = 0; i < data.length; i++) {
+        const field = data[i];
+        const namePath = `${pName ? `${pName}.` : ''}${field.name || ''}`;
+
+        if (namePath === k) {
+          delete field.name;
+          return field;
+        }
+
+        const result = extract(field.properties, namePath, k);
+
+        if (result) {
+          return result;
+        }
+      }
+    }
+
+    // keys为数组，支持提取多种返回结构，返回第一种满足的结构
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+
+      const result = extract(originResponse, '', k);
+
+      if (result) {
+        return Array.isArray(result) ? result : [result];
+      }
+    }
+
+    return originResponse;
   },
 };
 

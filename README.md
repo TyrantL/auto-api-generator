@@ -149,6 +149,14 @@ npm run api
 <td>['res']</td>
 <td>1.1.0</td>
 </tr>
+<tr>
+<td>extractResponseKeys</td>
+<td>对接口返回结构进行提取，应对axios拦截器对请求返回做提取的场景，如['data']则提取接口返回中的data字段作为Res，可以配置多个，返回匹配到的第一个</td>
+<td>false</td>
+<td>string[]</td>
+<td>-</td>
+<td>1.2.0</td>
+</tr>
 </tbody>
 </table>
 
