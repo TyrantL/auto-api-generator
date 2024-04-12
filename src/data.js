@@ -33,51 +33,67 @@ async function getApiData(config) {
       throw new Error(`${path}接口异常，请检查该接口文档状态是否正常`);
     });
 
+    const apis = filterApiByTags(getAllApis(data), config.tags);
+
     ret.basePath = data.basePath;
-    ret.apis = generateStandardApiData(data);
+    ret.apis = generateStandardApiData(apis, data);
   }
   return ret;
 }
 
+function getAllApis(originData) {
+  const apis = [];
+  const paths = originData.paths || {};
+
+  Object.keys(paths).forEach((path) => {
+    const restfulApis = paths[path];
+    Object.keys(restfulApis).forEach((method) => {
+      apis.push({...restfulApis[method], path, method});
+    });
+  });
+
+  return apis;
+}
+
+function filterApiByTags(apis, tags) {
+  if (!tags || tags.length === 0) {
+    return apis;
+  }
+
+  return apis.filter((api) => api.tags.some(tag => tags.includes(tag)));
+}
+
 // 将接口返回的数据转化为标准格式数据
-function generateStandardApiData(originData) {
+function generateStandardApiData(apis, originData) {
   const ret = [];
-  const paths = originData.paths;
   const schemas = originData.components?.schemas ?? {};
   const map = Object.values(schemas).reduce((acc, cur) => {
     acc[cur.title] = cur;
     return acc;
   }, {});
 
-  Object.entries(paths).forEach(([path, context]) => {
-    // 兼容 restful 风格
-    const methods = Object.keys(context);
+  apis.forEach((api) => {
+    const { query, body, opts } = parseRequest(api, map);
 
-    methods.forEach((method) => {
-      const api = context[method];
+    const apiInfo = {
+      id: api.operationId,
+      path: api.path,
+      title: api.summary,
+      method: api.method.toLowerCase(),
+      query,
+      body,
+      response: parseResponse(api, map),
+      tags: api.tags,
+      ...opts,
+    };
 
-      const { query, body, opts } = parseRequest(api, map, path);
-
-      const apiInfo = {
-        id: api.operationId,
-        path,
-        title: api.summary,
-        method: method.toLowerCase(),
-        query,
-        body,
-        response: parseResponse(api, map, path),
-        ...opts,
-      };
-
-      ret.push(apiInfo);
-    });
+    ret.push(apiInfo);
   });
-
   return ret;
 }
 
 //解析入参，入参有两种情况 parameters(query) 和 requestBody(body)
-function parseRequest(api, map, path) {
+function parseRequest(api, map) {
   let query = null;
   let body = null;
   const opts = {};
@@ -102,7 +118,7 @@ function parseRequest(api, map, path) {
     }
 
     try {
-      body = getBodyFromSchemas(path, map, content[contentType].schema.$ref);
+      body = getBodyFromSchemas(api.path, map, content[contentType].schema.$ref);
     } catch (e) {
       console.error(chalk.red(`[${chalk.blue(api.path)}]接口入参异常被捕获，请联系后端排查`));
     }
@@ -112,13 +128,13 @@ function parseRequest(api, map, path) {
 }
 
 // 解析出参
-function parseResponse(api, map, path) {
+function parseResponse(api, map) {
   if (!api.responses[200].content) {
     console.error(chalk.red(`[${api.path}]接口没有出参，请联系后端排查`));
     return null;
   }
 
-  return getResponseFromSchemas(path, map, api.responses[200].content['*/*'].schema.$ref);
+  return getResponseFromSchemas(api.path, map, api.responses[200].content['*/*'].schema.$ref);
 }
 
 function getBodyFromSchemas(path, schemas, ref) {

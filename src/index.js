@@ -1,6 +1,5 @@
-const chalk = require('chalk');
 const mergeConfig = require('./config');
-const { getApiData, formatApiData, formatData } = require('./data');
+const { getApiData, formatApiData } = require('./data');
 const { generateCodeFile, generateAxiosTemplate } = require('./file');
 
 async function generateCode(opts) {
