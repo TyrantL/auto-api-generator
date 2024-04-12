@@ -268,12 +268,12 @@ function formatApiData(apis, config) {
   apis = apis.map((apiItem) => {
     const codes = generateTsTypesCode(apiItem, config);
     return {
-      id: apiItem.operationId,
-      method: apiItem.method.toLowerCase(),
+      id: apiItem.id,
+      method: apiItem.method,
       apiName: fixedApiName(apiItem, config, existApiMap),
       path: apiItem.path,
       basePath: config.basePath,
-      title: trimBlank(apiItem.summary),
+      title: trimBlank(apiItem.title),
       headers: apiItem.headersJson ? `headers: { 'Content-Type': '${apiItem.headersJson}' },` : '',
       codes,
     };
