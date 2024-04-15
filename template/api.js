@@ -2,7 +2,9 @@ const { firstCharUpper } = require('../utils/index');
 const utils = require('../utils/ts');
 
 function genReqFieldName(req, config) {
-  return (!req || req === 'any') ? 'req?' : utils.getTsPropertyName({name: 'req', required: true}, config.tsNotStrict)
+  return (!req || req === 'any')
+    ? 'req?'
+    : utils.getTsPropertyName({ name: 'req', required: true }, config.tsNotStrict);
 }
 
 function renderCodeUnit(apiItem, config) {
@@ -33,7 +35,10 @@ function renderApiCallJsCode(apiData, config) {
 }
 
 function renderApiCallTsCode(apiData, config) {
-  config.apiCallTips = '// 该文件自动生成，请勿修改(除非知道自己在做什么)\n/* eslint-disable */\n// @ts-nocheck\nimport AT from \'./api.types\';\nimport { AxiosPromise as Promise } from \'axios\';\n';
+  if (config.extractResponseKeys) {
+    config.apiCallTips = '// 该文件自动生成，请勿修改(除非知道自己在做什么)\n/* eslint-disable */\n// @ts-nocheck\nimport AT from \'./api.types\';\n';
+  }
+  config.apiCallTips = config.apiCallTips || '// 该文件自动生成，请勿修改(除非知道自己在做什么)\n/* eslint-disable */\n// @ts-nocheck\nimport AT from \'./api.types\';\nimport { AxiosPromise as Promise } from \'axios\';\n';
 
   return renderApiCallJsCode(apiData, config);
 }
