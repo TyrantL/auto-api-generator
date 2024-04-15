@@ -1,2 +1,6 @@
 node_modules
 pnpm-lock.yaml
+.nyc_output
+coverage
+request
+.api.config.js

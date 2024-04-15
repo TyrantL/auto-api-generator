@@ -1,4 +1,3 @@
-const { pinyin } = require('pinyin');
 const TYPE_MAPPING = {
   number: ['int', 'integer', 'long', 'bigdecimal', 'float', 'double', 'number'],
   string: ['localdatetime', 'date', 'char', 'byte', 'short', 'character', 'string'],
@@ -26,6 +25,9 @@ function firstCharLower(str) {
 
 // 过滤接口标题中的空白
 function trimBlank(str) {
+  if (typeof str !== 'string') {
+    return '';
+  }
   return `${(str || '')}`.trim();
 }
 
@@ -37,14 +39,7 @@ function fixedPathForApiName(path) {
       return $1.charAt(1).toUpperCase();
     });
 
-  const parts = path.split('/').filter((part) => {
-    return !!part && part !== '/';
-  });
-
-  return {
-    path,
-    parts,
-  };
+  return path.split('/').filter(Boolean)
 }
 
 function firstChartUpperCaseAndTrim(str) {
@@ -54,12 +49,12 @@ function firstChartUpperCaseAndTrim(str) {
   if (matches && matches[1]) {
     return matches[1].toUpperCase() + matches[2].trim();
   } else {
-    return str.trim();
+    return str || '';
   }
 }
 
 function formatApiName(apiPath, method) {
-  const { parts } = fixedPathForApiName(apiPath);
+  const parts = fixedPathForApiName(apiPath);
   let str = '';
 
   if (parts.length > 0) {
@@ -85,14 +80,6 @@ function isBaseType(type) {
     }
   }
   return false;
-}
-
-function getTypeName(name) {
-  return pinyin(name, { style: 'normal' })
-    .map(item => firstCharUpper(item[0]))
-    .join('')
-    .replace(/[^a-zA-Z]/ig, '')
-    .replace(/DuiXiang$/, 'VO');
 }
 
 function deepEqual(a, b) {
@@ -217,6 +204,7 @@ function deepEqual(a, b) {
 }
 
 module.exports = {
+  TYPE_MAPPING,
   getBaseTypeMapping,
   firstCharUpper,
   firstCharLower,
@@ -224,5 +212,6 @@ module.exports = {
   formatApiName,
   deepEqual,
   isBaseType,
-  getTypeName,
+  fixedPathForApiName,
+  firstChartUpperCaseAndTrim,
 };
