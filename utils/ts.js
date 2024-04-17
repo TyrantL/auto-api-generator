@@ -41,7 +41,7 @@ const utils = {
 
     Object.keys(obj).forEach(key => {
       const [type, desc] = obj[key].split(CONCAT_DELIMITER);
-      res += `${desc ? `/** ${desc} */\n` : ''}${key}: ${type},\n `;
+      res += `${desc ? `/** ${desc} */\n` : ''}${key}: ${type},\n`;
     });
 
     res += '}';
@@ -155,6 +155,10 @@ const utils = {
     }
 
     let modelName = utils.generateModelName(prop);
+    // 存在同名但是属性不同的dto,在dto后加上Dto
+    if (opts.models.find(m => m.name === modelName) || curItem?.modelName === modelName) {
+      modelName = `${modelName}Dto`;
+    }
 
     children.push({
       pItem: prop,
@@ -166,7 +170,7 @@ const utils = {
   },
 
   generateModelName(prop) {
-    let n = prop.name;
+    let n = prop.oName || prop.name;
 
     return firstCharUpper(n ? `${n}VO` : 'anonymousDto');
   },
@@ -255,6 +259,9 @@ const utils = {
   travelChildren(children, opts) {
     const sameLevelChildren = [];
 
+    // 检查children的properties中是否有相同name的属性
+    utils.checkPropNameExists(children);
+
     for (let i = 0; i < children.length; i++) {
       const cItem = children[i];
       const pItem = cItem.pItem;
@@ -271,6 +278,25 @@ const utils = {
       utils.travelChildren(sameLevelChildren, opts);
     }
   },
+
+  // 检查同层级dto子类型中是否有同名属性，有的话通过oName区分
+  checkPropNameExists(children) {
+    const existPropNameMap = {};
+    children.forEach(parent => {
+      const props = parent.properties || [];
+      props.forEach(prop => {
+        if (existPropNameMap[prop.name]) {
+          let oName = `${prop.name}A`
+          while(existPropNameMap[oName]) {
+            oName = `${oName}A`;
+          }
+          prop.oName = oName;
+        }
+        existPropNameMap[prop.oName || prop.name] = true;
+      });
+    });
+  },
+
 
   startTravel(sourceData, opts) {
     const res = utils.travelForGenerateCode(sourceData, null, opts);
