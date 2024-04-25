@@ -6,6 +6,14 @@ function baseInterceptor(instance) {
   instance.interceptors.request.use((config) => {
     const headers = config.headers || {};
 
+    // 请求url中有{key}，使用config.data中对应的值替换掉url中的模板字符串
+    // eg. config.url = '/api/user/{id}', config.data = { id: 1 } => config.url = '/api/user/1'
+    if (/\{.*?}/.test(config.url)) {
+      Object.entries(config.data).forEach(([key, value]) => {
+        config.url = config.url.replace(`{${key}}`, value.toString());
+      });
+    }
+
     // 如果请求头的Content-Type为application/x-www-form-urlencoded，则使用qs库序列化请求数据
     if (headers['Content-Type'] === 'application/x-www-form-urlencoded') {
       const qsOptions = config.qs || {};
