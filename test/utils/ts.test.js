@@ -1,6 +1,6 @@
 const { expect } = require('chai');
 const utils = require('../../utils/ts');
-const data = require('./data');
+const data = require('./ts-data');
 
 describe('getTsType', () => {
   it('should return any if the type is not in TYPE_MAPPING', () => {
