@@ -191,9 +191,9 @@ const utils = {
 
     if (!existModelName || existModelName && modelName !== existModelName) {
       // 不是相同的dto，但是属性名相同时，加上Dto，防止相同层级出现字段相同
-      if (models.find(m => m.name === modelName)) {
-        modelName += 'Dto';
-      }
+      // if (models.find(m => m.name === modelName)) {
+      //   modelName += 'Dto';
+      // }
 
       const md = {
         name: modelName,
