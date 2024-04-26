@@ -220,7 +220,7 @@ function getResponseFromSchemas(path, _map, ref) {
             description: obj.description,
             required: obj.required ?? false,
             type: obj.type,
-            subTypes: obj.items?.type ?? null,
+            subType: obj.items?.type ?? null,
             properties: map[mapKey],
           });
           mapKey++;
