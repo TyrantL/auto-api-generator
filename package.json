@@ -13,7 +13,7 @@
   "scripts": {
     "api": "node bin/index.js create --config ./.api.config.js",
     "release": "standard-version",
-    "test": "nyc mocha test/**/*.test.js",
+    "test": "nyc mocha test/**/*.test.js --reporter-option maxDiffSize=0",
     "coverage": "nyc report --reporter=html"
   },
   "keywords": [

@@ -3,6 +3,7 @@ const chalk = require('chalk');
 const { trimBlank, formatApiName } = require('../utils');
 const { generateTsTypesCode } = require('./code');
 
+/* istanbul ignore next */
 async function getRequestUrl(config) {
   const host = config.host || 'https://letao.cnstrong.cn';
   const path = `${host}/${config.projectName}/swagger-resources`;
@@ -21,6 +22,7 @@ async function getRequestUrl(config) {
   };
 }
 
+/* istanbul ignore next */
 async function getApiData(config) {
   const { path, success } = await getRequestUrl(config);
   const ret = {
@@ -120,6 +122,7 @@ function parseRequest(api, map) {
     try {
       body = getBodyFromSchemas(api.path, map, content[contentType].schema.$ref);
     } catch (e) {
+      /* istanbul ignore next */
       console.error(chalk.red(`[${chalk.blue(api.path)}]接口入参异常被捕获，请联系后端排查`));
     }
   }
@@ -283,4 +286,7 @@ function formatApiData(apis, config) {
 }
 
 exports.getApiData = getApiData;
+exports.getAllApis = getAllApis;
+exports.filterApiByTags = filterApiByTags;
+exports.generateStandardApiData = generateStandardApiData;
 exports.formatApiData = formatApiData;
