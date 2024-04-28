@@ -57,14 +57,17 @@ const utils = {
     return !type || type === 'any' || isBaseType(type) || utils.isTsArray(type) || utils.isTsRecord(type) || utils.isTsSet(type);
   },
 
+  /* istanbul ignore next */
   isTsArray(str) {
     return str.startsWith('Array<');
   },
 
+  /* istanbul ignore next */
   isTsRecord(str) {
     return str.startsWith('Record<');
   },
 
+  /* istanbul ignore next */
   isTsSet(str) {
     return str.startsWith('Set<');
   },

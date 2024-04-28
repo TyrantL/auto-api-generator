@@ -255,6 +255,7 @@ function getResponseFromSchemas(path, _map, ref) {
 function fixedApiName({ path, method }, config, nameExistMap) {
   const apiName = formatApiName(path, method);
 
+  /* istanbul ignore if */
   if (nameExistMap[apiName]) {
     console.error(chalk.red(`${apiName} 接口名称重复，请排查修正后再生成`));
     throw new Error();

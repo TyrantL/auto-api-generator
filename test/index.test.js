@@ -1,9 +1,10 @@
 const { expect } = require('chai');
-const { getAllApis, filterApiByTags, generateStandardApiData } = require('../../src/data.js');
-const data = require('./data-data');
+const { getAllApis, filterApiByTags, generateStandardApiData, formatApiData } = require('../src/data.js');
+const data = require('./data/generateStandardApiData');
+const formatApiDataObject = require('./data/formatApiData');
 
-describe('data test', () => {
-  const key = 'case1'
+describe('test generateStandardApiData', () => {
+  const key = 'case1';
   const testData = data[key];
   const result = getAllApis(testData.input);
   it(`getAllApis ${key}`, () => {
@@ -34,8 +35,8 @@ describe('data test', () => {
   });
 });
 
-describe('data test 2', () => {
-  const key = 'case2'
+describe('test generateStandardApiData 2', () => {
+  const key = 'case2';
   const testData = data[key];
   const result = getAllApis(testData.input);
   it(`getAllApis ${key}`, () => {
@@ -50,8 +51,8 @@ describe('data test 2', () => {
   });
 });
 
-describe('data test 2 数据异常场景 ', () => {
-  const key = 'case3'
+describe('test generateStandardApiData 数据异常场景 ', () => {
+  const key = 'case3';
   const testData = data[key];
   const result = getAllApis(testData.input);
   it(`getAllApis ${key}`, () => {
@@ -63,5 +64,18 @@ describe('data test 2 数据异常场景 ', () => {
       .to
       .deep
       .eq(testData.standardResult);
+  });
+});
+
+describe('test formatApiData function ', () => {
+  Object.keys(formatApiDataObject).forEach((key) => {
+    it(`formatApiData ${key}`, () => {
+      const testData = formatApiDataObject[key];
+      const result = formatApiData(
+        testData.input,
+        testData.config,
+      );
+      expect(result).to.deep.eq(testData.result);
+    });
   });
 });
