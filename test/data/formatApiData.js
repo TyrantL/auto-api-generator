@@ -995,6 +995,192 @@ const samePropertiesDto = {
   ],
 };
 
+const sameDtoInReqAndRes = {
+  input: [
+    {
+      id: 'getUserInfoUsingGET',
+      path: '/auth/m/user/getUserInfo',
+      title: '获取用户信息',
+      method: 'get',
+      query: null,
+      body: [
+        {
+          name: 'orgDptInfoList',
+          description: '父级部门ID',
+          required: false,
+          type: 'array',
+          subTypes: null,
+          properties: [
+            {
+              name: 'hideInMenu',
+              description: '菜单是否隐藏',
+              required: false,
+              type: 'boolean',
+              subType: null,
+              properties: null,
+            },
+            {
+              name: 'permissionType',
+              description: '类型 1：菜单 2：按钮',
+              required: false,
+              type: 'integer',
+              subType: null,
+              properties: null,
+            },
+          ],
+        }
+      ],
+      response: [
+        {
+          name: 'code',
+          description: '业务响应状态码',
+          required: false,
+          type: 'integer',
+          subType: null,
+          properties: null,
+        },
+        {
+          name: 'data',
+          description: '业务响应数据',
+          required: false,
+          subTypes: null,
+          properties: [
+            {
+              name: 'deviceType',
+              description: '设备类型',
+              required: false,
+              type: 'integer',
+              subType: null,
+              properties: null,
+            },
+            {
+              name: 'orgName',
+              description: '机构名称',
+              required: false,
+              type: 'string',
+              subType: null,
+              properties: null,
+            },
+            {
+              name: 'dptId',
+              description: '部门ID',
+              required: false,
+              type: 'integer',
+              subType: null,
+              properties: null,
+            },
+            {
+              name: 'dptName',
+              description: '部门名称',
+              required: false,
+              type: 'string',
+              subType: null,
+              properties: null,
+            },
+            {
+              name: 'orgDptInfoList',
+              description: '父级部门ID',
+              required: false,
+              type: 'array',
+              subTypes: null,
+              properties: [
+                {
+                  name: 'hideInMenu',
+                  description: '菜单是否隐藏',
+                  required: false,
+                  type: 'boolean',
+                  subType: null,
+                  properties: null,
+                },
+                {
+                  name: 'permissionType1',
+                  description: '类型 1：菜单 2：按钮',
+                  required: false,
+                  type: 'string',
+                  subType: null,
+                  properties: null,
+                },
+              ],
+            },
+            {
+              name: 'orgDptInfoList1',
+              description: '父级部门ID',
+              required: false,
+              type: 'array',
+              subTypes: null,
+              properties: [
+                {
+                  name: 'hideInMenu',
+                  description: '菜单是否隐藏',
+                  required: false,
+                  type: 'boolean',
+                  subType: null,
+                  properties: null,
+                },
+                {
+                  name: 'permissionType',
+                  description: '类型 1：菜单 2：按钮',
+                  required: false,
+                  type: 'number',
+                  subType: null,
+                  properties: null,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          name: 'success',
+          description: '业务响应是否成功',
+          required: false,
+          type: 'boolean',
+          subType: null,
+          properties: null,
+        },
+        {
+          name: 'message',
+          description: '业务响应信息',
+          required: false,
+          type: 'string',
+          subType: null,
+          properties: null,
+        },
+      ],
+      tags: ['V1.0.0-用户信息', '用户信息'],
+    },
+  ],
+  config: { comment: false, tsNotStrict: false, tsNotStrictInclude: [] },
+  result: [
+    {
+      id: 'getUserInfoUsingGET',
+      method: 'get',
+      apiName: 'getAuthMUserGetUserInfo',
+      path: '/auth/m/user/getUserInfo',
+      basePath: undefined,
+      title: '获取用户信息',
+      headers: '',
+      codes: {
+        req: '{orgDptInfoList?:Array<OrgDptInfoListVO>}',
+        res: '{code?:number,data?:DataVO,success?:boolean,message?:string}',
+        models: [
+          {
+            name: 'OrgDptInfoListVO',
+            value: '{hideInMenu?:boolean,permissionType?:number}',
+          },
+          {
+            name: 'DataVO',
+            value: '{deviceType?:number,orgName?:string,dptId?:number,dptName?:string,orgDptInfoList?:Array<OrgDptInfoListVODto>,orgDptInfoList1?:Array<OrgDptInfoListVO>}',
+          },
+          {
+            name: 'OrgDptInfoListVODto',
+            value: '{hideInMenu?:boolean,permissionType1?:string}',
+          },
+        ],
+      },
+    },
+  ],
+};
+
 module.exports = {
   normal,
   sameNameDto,
@@ -1003,4 +1189,5 @@ module.exports = {
   extractResponseKeysBoundaryUnMatch,
   responseIsStaticPropWithNoName,
   samePropertiesDto,
+  sameDtoInReqAndRes,
 };
