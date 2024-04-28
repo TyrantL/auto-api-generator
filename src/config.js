@@ -2,10 +2,14 @@
 const defaultConfig = require('../utils/defaultConfigs');
 
 function mergeConfig(config) {
-  return {
+  const ret = {
     ...defaultConfig,
     ...config,
   };
+
+  ret.tsNotStrictInclude = Array.isArray(ret.tsNotStrictInclude) ? ret.tsNotStrictInclude : [];
+
+  return ret;
 }
 
 module.exports = mergeConfig;
