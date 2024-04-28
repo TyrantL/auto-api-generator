@@ -994,7 +994,6 @@ const samePropertiesDto = {
   ],
 };
 
-// 模拟同名dto场景
 module.exports = {
   normal,
   sameNameDto,
