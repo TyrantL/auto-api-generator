@@ -326,7 +326,7 @@ const utils = {
 
   // 通过keys提取接口返回结构，应对axios拦截器对请求返回做提取的场景
   extractResponse(originResponse, keys) {
-    if (keys.length === 0 || originResponse.length === 0) {
+    if (originResponse.length === 0) {
       return originResponse;
     }
 
@@ -344,11 +344,7 @@ const utils = {
           return field;
         }
 
-        const result = extract(field.properties, namePath, k);
-
-        if (result) {
-          return result;
-        }
+        extract(field.properties, namePath, k);
       }
     }
 
