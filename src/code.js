@@ -15,16 +15,11 @@ function generateTsTypesCode(apiData, config) {
     apiData.response = utils.extractResponse(apiData.response, config.extractResponseKeys)
   }
   // 解析 response
-  const res = utils.transform2TsTypesCode(apiData.response, config, apiData, [...params.models, ...data.models]);
+  const res = utils.transform2TsTypesCode(apiData.response, config, apiData, data.models);
 
-  const modelsMap = {};
-
-  [].concat(params.models, data.models, res.models).forEach(m => {
-    if (!modelsMap[m.name]) {
-      modelsMap[m.name] = true;
+  res.models.forEach(m => {
       m.value = utils.trimJsonString2Ts(config.comment ? utils.concatComment(m.value) : JSON.stringify(m.value));
       models.push(m);
-    }
   });
 
   return {
