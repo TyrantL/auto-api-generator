@@ -67,6 +67,22 @@ describe('test generateStandardApiData 数据异常场景 ', () => {
   });
 });
 
+describe('test generateStandardApiData 数据异常场景2 ', () => {
+  const key = 'case4';
+  const testData = data[key];
+  const result = getAllApis(testData.input);
+  it(`getAllApis ${key}`, () => {
+    expect(result).to.deep.eq(testData.result);
+  });
+
+  it(`generateStandardApiData ${key}`, () => {
+    expect(generateStandardApiData(result, testData.input))
+      .to
+      .deep
+      .eq(testData.standardResult);
+  });
+});
+
 describe('test formatApiData function ', () => {
   Object.keys(formatApiDataObject).forEach((key) => {
     it(`formatApiData ${key}`, () => {

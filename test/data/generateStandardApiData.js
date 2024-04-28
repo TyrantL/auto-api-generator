@@ -295,25 +295,6 @@ const case1 = {
           'description': '流程审批操作日志',
           'title': 'WfApproveLogModel对象',
           'type': 'object',
-          'properties': {
-            'modifiedOn': { 'format': 'date-time', 'type': 'string' },
-            'isDeleted': { 'type': 'boolean' },
-            'createdBy': { 'format': 'int64', 'type': 'integer' },
-            'operationState': {
-              'format': 'int32',
-              'description': '操作状态（无需处理，待处理，已审批/提交，退回，作废，撤销）',
-              'type': 'integer',
-            },
-            'modifiedBy': { 'format': 'int64', 'type': 'integer' },
-            'id': { 'format': 'int64', 'type': 'integer' },
-            'createdOn': { 'format': 'date-time', 'type': 'string' },
-            'approveOption': { 'description': '审批意见', 'type': 'string' },
-            'approveUserId': {
-              'format': 'int64',
-              'description': '节点人员ID',
-              'type': 'integer',
-            },
-          },
         },
         'WfCarbonCopyInfoModel对象': {
           'description': '审批抄送人信息',
@@ -368,7 +349,7 @@ const case1 = {
           'requestBody': {
             'content': {
               'application/json': {
-                'schema': { '$ref': '#/components/schemas/BaseConfigEditRequest' },
+                'schema': { '$ref': 'BaseConfigEditRequest' },
               },
             },
           },
@@ -378,7 +359,7 @@ const case1 = {
               'description': 'OK',
               'content': {
                 '*/*': {
-                  'schema': { '$ref': '#/components/schemas/统一响应类«boolean»' },
+                  'schema': { '$ref': '统一响应类«boolean»' },
                 },
               },
             },
@@ -411,7 +392,7 @@ const case1 = {
           },
           'parameters': [
             {
-              'schema': { 'format': 'int64', 'type': 'integer' },
+              'schema': { 'format': 'int64' },
               'in': 'query',
               'name': 'id',
               'description': '公文ID（派发时传值:收/发文模板ID）',
@@ -483,7 +464,7 @@ const case1 = {
       'requestBody': {
         'content': {
           'application/json': {
-            'schema': { '$ref': '#/components/schemas/BaseConfigEditRequest' },
+            'schema': { '$ref': 'BaseConfigEditRequest' },
           },
         },
       },
@@ -493,7 +474,7 @@ const case1 = {
           'description': 'OK',
           'content': {
             '*/*': {
-              'schema': { '$ref': '#/components/schemas/统一响应类«boolean»' },
+              'schema': { '$ref': '统一响应类«boolean»' },
             },
           },
         },
@@ -526,7 +507,7 @@ const case1 = {
       },
       'parameters': [
         {
-          'schema': { 'format': 'int64', 'type': 'integer' },
+          'schema': { 'format': 'int64' },
           'in': 'query',
           'name': 'id',
           'description': '公文ID（派发时传值:收/发文模板ID）',
@@ -684,7 +665,7 @@ const case1 = {
           'name': 'id',
           'description': '公文ID（派发时传值:收/发文模板ID）',
           'required': true,
-          'type': 'integer',
+          'type': 'any',
           'subType': null,
           'properties': null,
         },
@@ -880,80 +861,7 @@ const case1 = {
                   required: false,
                   type: 'array',
                   subType: null,
-                  properties: [
-                    {
-                      name: 'modifiedOn',
-                      description: undefined,
-                      required: false,
-                      type: 'string',
-                      subType: null,
-                      properties: null,
-                    },
-                    {
-                      name: 'isDeleted',
-                      description: undefined,
-                      required: false,
-                      type: 'boolean',
-                      subType: null,
-                      properties: null,
-                    },
-                    {
-                      name: 'createdBy',
-                      description: undefined,
-                      required: false,
-                      type: 'integer',
-                      subType: null,
-                      properties: null,
-                    },
-                    {
-                      name: 'operationState',
-                      description: '操作状态（无需处理，待处理，已审批/提交，退回，作废，撤销）',
-                      required: false,
-                      type: 'integer',
-                      subType: null,
-                      properties: null,
-                    },
-                    {
-                      name: 'modifiedBy',
-                      description: undefined,
-                      required: false,
-                      type: 'integer',
-                      subType: null,
-                      properties: null,
-                    },
-                    {
-                      name: 'id',
-                      description: undefined,
-                      required: false,
-                      type: 'integer',
-                      subType: null,
-                      properties: null,
-                    },
-                    {
-                      name: 'createdOn',
-                      description: undefined,
-                      required: false,
-                      type: 'string',
-                      subType: null,
-                      properties: null,
-                    },
-                    {
-                      name: 'approveOption',
-                      description: '审批意见',
-                      required: false,
-                      type: 'string',
-                      subType: null,
-                      properties: null,
-                    },
-                    {
-                      name: 'approveUserId',
-                      description: '节点人员ID',
-                      required: false,
-                      type: 'integer',
-                      subType: null,
-                      properties: null,
-                    },
-                  ],
+                  properties: [],
                 },
                 {
                   name: 'userName',
@@ -2289,9 +2197,7 @@ const case2 = {
 const case3 = {
   input: {
     ...base,
-    'components': {
-      'schemas': {},
-    },
+    'components': {},
     'paths': {
       '/auth/baseConfig/edit': {
         'post': {
@@ -2344,7 +2250,6 @@ const case3 = {
       },
       'tags': ['V2.0.0-基础设置', '基础设置'],
     },
-
   ],
   standardResult: [
     {
@@ -2361,8 +2266,18 @@ const case3 = {
   ],
 };
 
+const case4 = {
+  input: {
+    ...base,
+    'components': {},
+  },
+  result: [],
+  standardResult: [],
+};
+
 module.exports = {
   case1,
   case2,
   case3,
+  case4,
 };

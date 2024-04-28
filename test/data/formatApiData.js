@@ -183,6 +183,7 @@ const normal = {
           ],
         },
       ],
+      headersJson: 'application/json; charset=utf-8',
       tags: ['V1.0.0-公文中心、流转', '公文中心、流转'],
     },
   ],
@@ -195,7 +196,7 @@ const normal = {
       path: '/auth/m/myOfficialDocument/getReadPageList',
       basePath: undefined,
       title: '已阅公文列表（分页）（app端接口）',
-      headers: '',
+      headers: `headers: { 'Content-Type': 'application/json; charset=utf-8' },`,
       codes: {
         req: '{\n' +
           '/** 当前页 */\n' +
@@ -566,7 +567,7 @@ const extractResponseKeysBoundary = {
       tags: ['V1.0.0-公文中心、流转', '公文中心、流转'],
     },
   ],
-  config: {comment: false, tsNotStrictInclude: ['res'], extractResponseKeys: ['data'] },
+  config: { comment: false, tsNotStrictInclude: ['res'], extractResponseKeys: ['data'] },
   result: [
     {
       id: 'getReadPageListForAppUsingGET',
@@ -582,7 +583,7 @@ const extractResponseKeysBoundary = {
         models: [],
       },
     },
-  ]
+  ],
 };
 const extractResponseKeysBoundaryUnMatch = {
   input: [
@@ -978,7 +979,7 @@ const samePropertiesDto = {
           },
           {
             name: 'OrgDptInfoListVO',
-            value: 'any'
+            value: 'any',
           },
           {
             name: 'PermissionInfoVO',
