@@ -9,7 +9,7 @@ function genReqFieldName(req, config) {
 
 function renderCodeUnit(apiItem, config) {
   const name = firstCharUpper(apiItem.apiName);
-  const comment = config.comment && apiItem.description ? `/** ${apiItem.description} */\n` : '';
+  const comment = config.comment && apiItem.title ? `/** ${apiItem.title} */\n` : '';
   return (
     `${comment}${apiItem.apiName}: (${genReqFieldName(apiItem.codes.req, config)}: AT.ET<AT.${name}.Req>, option:object = {}): Promise<AT.ET<AT.${name}.Res>> => {
         return axios({data: req, ...config.${apiItem.apiName}, ...option });
