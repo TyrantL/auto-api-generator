@@ -36,7 +36,7 @@ function renderApiCallJsCode(apiData, config) {
 
 function renderApiCallTsCode(apiData, config) {
   /* istanbul ignore if */
-  if (config.extractResponseKeys) {
+  if (config.extractAxiosPromise) {
     config.apiCallTips = '// 该文件自动生成，请勿修改(除非知道自己在做什么)\n/* eslint-disable */\n// @ts-nocheck\nimport AT from \'./api.types\';\n';
   }
   config.apiCallTips = config.apiCallTips || '// 该文件自动生成，请勿修改(除非知道自己在做什么)\n/* eslint-disable */\n// @ts-nocheck\nimport AT from \'./api.types\';\nimport { AxiosPromise as Promise } from \'axios\';\n';

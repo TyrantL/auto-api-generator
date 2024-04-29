@@ -166,6 +166,14 @@ npm run api
 <td>-</td>
 <td>1.2.0</td>
 </tr>
+<tr>
+<td>extractAxiosPromise</td>
+<td>是否提取axios返回的data层级</td>
+<td>false</td>
+<td>boolean</td>
+<td>-</td>
+<td>1.2.3</td>
+</tr>
 </tbody>
 </table>
 
