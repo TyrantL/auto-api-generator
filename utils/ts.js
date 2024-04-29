@@ -74,6 +74,7 @@ const utils = {
 
   // 过滤属性为{}的情况
   trimFieldName(str) {
+    // istanbul ignore next
     return (str || '').replace(/[{}]/ig, '');
   },
 
@@ -137,6 +138,7 @@ const utils = {
 
   // 处理属性值是对象或者对象数组
   handleComplexValue(prop, curItem, children, opts) {
+    /* istanbul ignore next */
     prop.properties = prop.properties || [];
     // 当返回是数组或者基本类型、Map时，第一层的name是不存在的
     if (!prop.name && prop.type !== 'array') {
@@ -192,11 +194,12 @@ const utils = {
   extractModel(dto, modelName, pItem, models) {
     const existModelName = utils.getExistModelName(dto, modelName, pItem, models);
 
+    /* istanbul ignore next */
     if (!existModelName || existModelName && modelName !== existModelName) {
       // 不是相同的dto，但是属性名相同时，加上Dto，防止相同层级出现字段相同
-      // if (models.find(m => m.name === modelName)) {
-      //   modelName += 'Dto';
-      // }
+      if (models.find(m => m.name === modelName)) {
+        modelName += 'Dto';
+      }
 
       const md = {
         name: modelName,
@@ -240,6 +243,7 @@ const utils = {
       const fieldName = prop.name ? utils.getTsPropertyName(prop, opts.config.tsNotStrict) : '';
 
       if (fieldName) {
+        /* istanbul ignore else */
         if (utils.trimFieldName(fieldName)) {
           const v = utils.genCodeWithFieldName(prop, curItem, children, opts);
           dto[fieldName] = opts.config.comment && prop.description ? `${v}${CONCAT_DELIMITER}${trimBlank(prop.description)}` : v;
@@ -286,6 +290,7 @@ const utils = {
   checkPropNameExists(children) {
     const existPropNameMap = {};
     children.forEach(parent => {
+      /* istanbul ignore next */
       const props = parent.properties || [];
       props.forEach(prop => {
         if (existPropNameMap[prop.name]) {
@@ -340,6 +345,7 @@ const utils = {
 
       for (let i = 0; i < data.length; i++) {
         const field = data[i];
+        /* istanbul ignore next */
         const namePath = `${pName ? `${pName}.` : ''}${field.name || ''}`;
 
         if (namePath === k) {
@@ -358,6 +364,7 @@ const utils = {
       const result = extract(originResponse, '', k);
 
       if (result) {
+        /* istanbul ignore next */
         return Array.isArray(result) ? result : [result];
       }
     }

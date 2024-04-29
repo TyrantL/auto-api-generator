@@ -469,10 +469,10 @@ const extractResponseKeys = {
           subTypes: null,
           properties: [
             {
-              name: 'urgencyId',
+              name: 'urgency-id',
               description: '紧急程度id',
               required: false,
-              type: 'integer',
+              type: 'hhhhh',
               subType: null,
               properties: null,
             },
@@ -540,7 +540,7 @@ const extractResponseKeys = {
             name: 'AnonymousDto',
             value: '{\n' +
               '/** 紧急程度id */\n' +
-              'urgencyId: number,\n' +
+              '\'urgency-id\': any,\n' +
               '/** 公文类型名称 */\n' +
               'odTypeName: string,\n' +
               '/** 限办日期 我的待办列表才会用到，其他用不到 */\n' +
@@ -994,7 +994,6 @@ const samePropertiesDto = {
     },
   ],
 };
-
 const sameDtoInReqAndRes = {
   input: [
     {

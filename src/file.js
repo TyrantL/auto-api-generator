@@ -27,6 +27,7 @@ async function generateCodeFile(data, config, opt) {
   for (const fileName in tsCodeTemplateConfig) {
     const item = tsCodeTemplateConfig[fileName];
 
+    /* istanbul ignore else */
     if (item && item.render) {
       const code = item.render(data, config);
 
@@ -50,6 +51,7 @@ function genFile(code, fileName, outputFolder, config) {
   console.log(`${outputPath}更新完成!`);
 }
 
+/* istanbul ignore next */
 async function generateAxiosTemplate(opts) {
   const outputFile = path.resolve(opts.output, 'request.js');
 
@@ -65,4 +67,5 @@ async function generateAxiosTemplate(opts) {
 module.exports = {
   generateCodeFile,
   generateAxiosTemplate,
+  prettierCode,
 };

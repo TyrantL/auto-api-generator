@@ -2,6 +2,10 @@ const { expect } = require('chai');
 const { getAllApis, filterApiByTags, generateStandardApiData, formatApiData } = require('../src/data.js');
 const data = require('./data/generateStandardApiData');
 const formatApiDataObject = require('./data/formatApiData');
+const generateCodeFileObject = require('./data/generateCodeFile');
+const { generateCodeFile, prettierCode } = require('../src/file.js');
+const path = require('path');
+const fs = require('fs-extra');
 
 describe('test generateStandardApiData', () => {
   const key = 'case1';
@@ -83,7 +87,7 @@ describe('test generateStandardApiData 数据异常场景2 ', () => {
   });
 });
 
-describe('test formatApiData function ', () => {
+describe('test formatApiData function', () => {
   Object.keys(formatApiDataObject).forEach((key) => {
     it(`formatApiData ${key}`, () => {
       const testData = formatApiDataObject[key];
@@ -94,4 +98,28 @@ describe('test formatApiData function ', () => {
       expect(result).to.deep.eq(testData.result);
     });
   });
+});
+
+describe('test generateCodeFile function', () => {
+
+  Object.keys(generateCodeFileObject).forEach(key => {
+
+    it('generateCodeFile', async () => {
+      const data = generateCodeFileObject[key];
+
+      await generateCodeFile(data.input, data.config);
+
+      const output = path.resolve(data.config.output, data.config.folderName ?? data.config.projectName);
+
+      const expectConfigFile = fs.readFileSync(path.resolve(output, 'config.ts'), 'utf-8');
+      expect(expectConfigFile).to.equal(prettierCode(data.result.config));
+
+      const expectApiFile = fs.readFileSync(path.resolve(output, 'api.ts'), 'utf-8');
+      expect(expectApiFile).to.equal(prettierCode(data.result.api));
+
+      const expectTypesFile = fs.readFileSync(path.resolve(output, 'api.types.ts'), 'utf-8');
+      expect(expectTypesFile).to.equal(prettierCode(data.result.types));
+
+    });
+  })
 });

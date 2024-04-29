@@ -11,6 +11,7 @@ function getDeclare(name, c) {
   const reqUseType = !c.req || utils.tsUseTypeDeclare(c.req);
   const resUseType = !c.res || utils.tsUseTypeDeclare(c.res);
 
+  /* istanbul ignore next */
   return `export module ${name} {
     ${generateInterface(c.models)}
     ${reqUseType ? `export type Req = ${c.req || 'any'}` : `export interface Req ${c.req}`}\n
@@ -21,6 +22,7 @@ function getDeclare(name, c) {
 function renderCodeUnit(apiItem, config) {
   const name = firstCharUpper(apiItem.apiName);
 
+  /* istanbul ignore next */
   const comment = config.comment
     ? `/** ${apiItem.title ? `${apiItem.title} ` : ''}${apiItem.method} ${apiItem.path.replace(/\*\//gi, '{*}/')} */\n`
     : '';

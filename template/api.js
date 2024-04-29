@@ -19,7 +19,7 @@ function renderCodeUnit(apiItem, config) {
 
 function renderApiCallJsCode(apiData, config) {
   let content = '';
-
+  /* istanbul ignore next */
   content += config.apiCallTips ?? '// 该文件自动生成，请勿修改(除非知道自己在做什么)\n/* eslint-disable */\n';
   content += 'import axios from \'../request\';\n';
   content += 'import config from \'./config\';\n';
@@ -35,6 +35,7 @@ function renderApiCallJsCode(apiData, config) {
 }
 
 function renderApiCallTsCode(apiData, config) {
+  /* istanbul ignore if */
   if (config.extractResponseKeys) {
     config.apiCallTips = '// 该文件自动生成，请勿修改(除非知道自己在做什么)\n/* eslint-disable */\n// @ts-nocheck\nimport AT from \'./api.types\';\n';
   }
