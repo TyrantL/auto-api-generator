@@ -1,5 +1,7 @@
 name: Test Coveralls
 
+
+
 on:
   push:
     branches: [release]
@@ -31,7 +33,7 @@ jobs:
 
     - name: Upload to Coveralls
       env:
-         COVERALLS_BRANCH: release
+         COVERALLS_BRANCH: ${GITHUB_REF##*/}
          COVERALLS_SERVICE_NAME: github
          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       run: |
