@@ -10,7 +10,7 @@ jobs:
 
   test-and-coveralls:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v1
@@ -19,6 +19,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
+
+    - name: Install Dependencies
+      run: |
+        npm install 
 
     - name: Run Tests and Generate Coverage
       run: |
