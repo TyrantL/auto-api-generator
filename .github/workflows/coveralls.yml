@@ -26,6 +26,7 @@ jobs:
 
     - name: Run Tests and Generate Coverage
       run: |
+        npm run test
         npm run coverage
 
     - name: Upload to Coveralls

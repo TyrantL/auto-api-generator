@@ -13,8 +13,8 @@
   "scripts": {
     "api": "node bin/index.js create --config ./.api.config.js",
     "release": "standard-version",
-    "test": "./node_modules/mocha/bin/mocha.js test/*.test.js test/**/*.test.js --reporter-option maxDiffSize=0",
-    "coverage": "./node_modules/nyc/bin/nyc.js report --reporter=lcov"
+    "test": "nyc mocha test/*.test.js test/**/*.test.js --reporter-option maxDiffSize=0",
+    "coverage": "nyc report --reporter=lcov"
   },
   "keywords": [
     "api generate"
