@@ -2,7 +2,7 @@
 
 ![npm (scoped)](https://img.shields.io/npm/v/smart-api-generator)
 [![Downloads](https://img.shields.io/npm/dm/smart-api-generator)](https://www.npmjs.com/package/smart-api-generator)
-[![Coverage Status](https://coveralls.io/repos/github/TyrantL/auto-api-generator/badge.svg?branch=)](https://coveralls.io/github/TyrantL/auto-api-generator?branch=)
+[![Coverage Status](https://coveralls.io/repos/github/TyrantL/auto-api-generator/badge.svg?branch=release)](https://coveralls.io/github/TyrantL/auto-api-generator?branch=release)
 
 mart-api-generator是一个高效能的工具，专门用来自动化创建API接口及其相关文档
 
