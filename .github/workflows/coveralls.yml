@@ -1,0 +1,32 @@
+name: Test Coveralls
+
+on:
+  push:
+    branches: [release]
+  pull_request:
+    branches: [release]
+
+jobs:
+
+  test-and-coveralls:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v1
+
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+
+    - name: Run Tests and Generate Coverage
+      run: |
+        npm run coverage
+
+    - name: Upload to Coveralls
+      env:
+         COVERALLS_SERVICE_NAME: github
+         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+      run: |
+        cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
