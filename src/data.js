@@ -146,7 +146,7 @@ function getBodyFromSchemas(path, schemas, ref) {
   let body = null;
 
   if (!schemas[targetComponent]) {
-    console.error(chalk.red(`[${path.path}]接口入参异常，请联系后端排查`));
+    console.error(chalk.red(`[${path}]接口入参异常，请联系后端排查`));
     return body;
   }
 
