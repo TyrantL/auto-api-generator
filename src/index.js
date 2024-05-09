@@ -1,6 +1,6 @@
 const mergeConfig = require('./config');
 const { getApiData, formatApiData } = require('./data');
-const { generateCodeFile, generateAxiosTemplate } = require('./file');
+const { generateCodeFile, generateAxiosTemplate, mergeLocalAndRemoteApiConfig } = require('./file');
 
 async function generateCode(opts) {
   const { projects } = opts;
@@ -20,7 +20,11 @@ async function generateCode(opts) {
         ...curProject,
       });
 
-      const data = formatApiData(apis, config);
+      let data = formatApiData(apis, config);
+
+      if (config.mergeConfig !== false) {
+        data = mergeLocalAndRemoteApiConfig(data, config);
+      }
 
       await generateCodeFile(data, config, opts);
     }

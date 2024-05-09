@@ -7,6 +7,7 @@ function mergeConfig(config) {
     ...config,
   };
 
+  ret.folderName = ret.folderName ?? ret.projectName;
   ret.tsNotStrictInclude = Array.isArray(ret.tsNotStrictInclude) ? ret.tsNotStrictInclude : [];
   ret.extractResponseKeys = Array.isArray(ret.extractResponseKeys) ? ret.extractResponseKeys : [];
   ret.extractAxiosPromise = ret.extractResponseKeys.length ? true : (ret.extractAxiosPromise ?? false);
