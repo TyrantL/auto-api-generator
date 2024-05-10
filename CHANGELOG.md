@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.4](https://github.com/TyrantL/auto-api-generator/compare/v1.2.3...v1.2.4) (2024-05-10)
+
+
+### Bug Fixes
+
+* **getApiData:** 修复接口异常时抛出错误中的接口路径为undefined的bug ([02529af](https://github.com/TyrantL/auto-api-generator/commit/02529af138a683935af5ee7e505bb2783338dc7b))
+
 ### [1.2.3](https://github.com/TyrantL/auto-api-generator/compare/v1.2.2...v1.2.3) (2024-04-29)
 
 
