@@ -68,14 +68,14 @@ function customInterceptor(instance) {
   instance.interceptors.request.use((config) => {
     return config;
   }, (error) => {
-    return Promise.reject(error)
+    return Promise.reject(error);
   });
 
   // 添加响应拦截器
   instance.interceptors.response.use((response) => {
     return Promise.resolve(response);
   }, (error) => {
-    return Promise.reject(error)
+    return Promise.reject(error);
   });
 }
 
