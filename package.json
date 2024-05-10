@@ -1,7 +1,7 @@
 {
   "name": "smart-api-generator",
   "version": "1.3.0",
-  "description": "auto-api-generator是一个高效能的工具，专门用来自动化创建API接口及其相关文档",
+  "description": "smart-api-generator是一个高效能的工具，专门用来自动化创建API接口及其相关文档",
   "main": "src/index.js",
   "repository": {
     "type": "git",
