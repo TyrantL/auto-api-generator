@@ -174,6 +174,17 @@ npm run api
 <td>-</td>
 <td>1.2.3</td>
 </tr>
+<tr>
+<td>mergeConfig</td>
+<td>
+    打开，不会删除本地配置有但是接口文档中没有的接口，可以手动删除，而且新增的接口都会排列到最后面<br/>
+    关闭，文件的生成完全按照接口文档生成
+</td>
+<td>true</td>
+<td>boolean</td>
+<td>-</td>
+<td>1.3.0</td>
+</tr>
 </tbody>
 </table>
 
