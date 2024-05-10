@@ -144,6 +144,7 @@ const noComment = {
   config: {
     output: './test/request/noComment',
     projectName: 'letao-official-document-center',
+    folderName: 'letao-official-document-center',
     comment: false,
   },
   result: {

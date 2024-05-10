@@ -87,7 +87,7 @@ function mergeLocalAndRemoteApiConfig(data, config) {
       distData.push({
         apiName: existPathAndNameMap[k],
         path: existApiItem.url,
-        baseURL: existApiItem.baseURL || '',
+        basePath: existApiItem.baseURL,
         title: '',
         method: existApiItem.method,
         headers: existApiItem.headers ? `headers: ${JSON.stringify(existApiItem.headers)}` : '',

@@ -3,7 +3,8 @@ const { getAllApis, filterApiByTags, generateStandardApiData, formatApiData } = 
 const data = require('./data/generateStandardApiData');
 const formatApiDataObject = require('./data/formatApiData');
 const generateCodeFileObject = require('./data/generateCodeFile');
-const { generateCodeFile, prettierCode } = require('../src/file.js');
+const mergeLocalAndRemoteApiConfigObject = require('./data/mergeLocalAndRemoteApiConfig');
+const { generateCodeFile, prettierCode, mergeLocalAndRemoteApiConfig } = require('../src/file.js');
 const path = require('path');
 const fs = require('fs-extra');
 
@@ -121,5 +122,16 @@ describe('test generateCodeFile function', () => {
       expect(expectTypesFile).to.equal(prettierCode(data.result.types));
 
     });
-  })
+  });
+});
+
+describe('test mergeLocalAndRemoteApiConfig function', () => {
+  Object.keys(mergeLocalAndRemoteApiConfigObject).forEach(key => {
+    it(`mergeLocalAndRemoteApiConfig ${key}`, () => {
+      const data = mergeLocalAndRemoteApiConfigObject[key];
+      const res = mergeLocalAndRemoteApiConfig(data.input, data.config);
+
+      expect(res).to.deep.eq(data.result);
+    });
+  });
 });
