@@ -9,9 +9,6 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **新增能力:** 新增增量更新能力，并且不会删除本地有但是拉取到的数据中不存在的接口 ([a5ef986](https://github.com/TyrantL/auto-api-generator/commit/a5ef98617fd8a5c9483a6537523e0c8b18769fbe))
 
-### [1.2.4](https://github.com/TyrantL/auto-api-generator/compare/v1.2.3...v1.2.4) (2024-05-10)
-
-
 ### Bug Fixes
 
 * **getApiData:** 修复接口异常时抛出错误中的接口路径为undefined的bug ([02529af](https://github.com/TyrantL/auto-api-generator/commit/02529af138a683935af5ee7e505bb2783338dc7b))
