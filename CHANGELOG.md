@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/TyrantL/auto-api-generator/compare/v1.2.4...v1.3.0) (2024-05-10)
+
+
+### Features
+
+* **新增能力:** 新增增量更新能力，并且不会删除本地有但是拉取到的数据中不存在的接口 ([a5ef986](https://github.com/TyrantL/auto-api-generator/commit/a5ef98617fd8a5c9483a6537523e0c8b18769fbe))
+
 ### [1.2.4](https://github.com/TyrantL/auto-api-generator/compare/v1.2.3...v1.2.4) (2024-05-10)
 
 
