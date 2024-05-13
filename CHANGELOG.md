@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/TyrantL/auto-api-generator/compare/v1.3.0...v1.3.1) (2024-05-13)
+
+
+### Bug Fixes
+
+* **dep:** 删除npm依赖中的pinyin ([e8b1f3e](https://github.com/TyrantL/auto-api-generator/commit/e8b1f3e9cf344e6f47e47c0c7d967b1ce617dc2e))
+
 ## [1.3.0](https://github.com/TyrantL/auto-api-generator/compare/v1.2.4...v1.3.0) (2024-05-10)
 
 
