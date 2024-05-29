@@ -155,6 +155,11 @@ const utils = {
       existModelName = curItem.modelName;
     }
 
+    // 和同层级提取出来的dto比较
+    if (prop.properties && children.length) {
+      existModelName = utils.findAttrEqualSaveLevelModel(prop, children) ?? existModelName;
+    }
+
     if (existModelName) {
       return existModelName;
     }
@@ -227,6 +232,10 @@ const utils = {
     return match ? match.name : null;
   },
 
+  findAttrEqualSaveLevelModel(prop, children) {
+    return (children.find(child => deepEqual(child.properties, prop.properties)) || {}).modelName;
+  },
+
   travelForGenerateCode(sourceData, curItem, opts) {
     if (sourceData.length === 0) {
       return {
@@ -293,7 +302,7 @@ const utils = {
       /* istanbul ignore next */
       const props = parent.properties || [];
       props.forEach(prop => {
-        if (existPropNameMap[prop.name]) {
+        if (existPropNameMap[prop.name] && !isBaseType(prop.type)) {
           let oName = `${prop.name}A`
           while(existPropNameMap[oName]) {
             oName = `${oName}A`;
