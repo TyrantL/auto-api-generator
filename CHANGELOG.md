@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.2](https://github.com/TyrantL/auto-api-generator/compare/v1.3.1...v1.3.2) (2024-05-29)
+
+
+### Bug Fixes
+
+* **bug修复:** 修复同层级存在相同dto生成多个类型的bug ([4b2bce4](https://github.com/TyrantL/auto-api-generator/commit/4b2bce400d248adaa62af7e0855d43fae1d51c87))
+* **兼容:** 兼容接口request中的字段required标志在单独的required字段中 ([75479af](https://github.com/TyrantL/auto-api-generator/commit/75479af7a5d2d5434e3fce91d2dd12cb52228fb6))
+
 ### [1.3.1](https://github.com/TyrantL/auto-api-generator/compare/v1.3.0...v1.3.1) (2024-05-13)
 
 
