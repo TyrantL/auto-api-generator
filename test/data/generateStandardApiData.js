@@ -74,6 +74,7 @@ const case1 = {
               'type': 'integer',
             },
           },
+          'required': ['descriptionContent'],
         },
         '统一响应类«boolean»': {
           'title': '统一响应类«boolean»',
@@ -588,7 +589,7 @@ const case1 = {
         {
           'name': 'descriptionContent',
           'description': '描述',
-          'required': false,
+          'required': true,
           'type': 'string',
           'subType': null,
           'properties': null,

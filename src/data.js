@@ -150,7 +150,10 @@ function getBodyFromSchemas(path, schemas, ref) {
     return body;
   }
 
-  body = Object.entries(schemas[targetComponent].properties).map(([key, obj]) => {
+  /* istanbul ignore next */
+  const { properties = [], required = [] } = schemas[targetComponent];
+
+  body = Object.entries(properties).map(([key, obj]) => {
     let properties = null;
 
     if (obj.$ref) {
@@ -164,7 +167,7 @@ function getBodyFromSchemas(path, schemas, ref) {
     return {
       name: key,
       description: obj.description,
-      required: obj.required ?? false,
+      required: obj.required || required.includes(key),
       type: obj.type,
       subType: obj.items?.type ?? null,
       properties,
