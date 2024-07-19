@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.3](https://github.com/TyrantL/auto-api-generator/compare/v1.3.2...v1.3.3) (2024-07-19)
+
+
+### Bug Fixes
+
+* **generateStandardApiData:** 修复接口入参为数组时，类型获取失败的bug ([78e7781](https://github.com/TyrantL/auto-api-generator/commit/78e7781bf3e21b234515dbdb24db996900ca14d3))
+
 ### [1.3.2](https://github.com/TyrantL/auto-api-generator/compare/v1.3.1...v1.3.2) (2024-05-29)
 
 
