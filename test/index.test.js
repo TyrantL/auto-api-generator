@@ -17,9 +17,9 @@ describe('test generateStandardApiData', () => {
   });
 
   it(`filterApiByTags ${key}`, () => {
-    expect(filterApiByTags(result, ['公文管理--草稿箱'])).to.deep.eq(testData.result.slice(2));
-    expect(filterApiByTags(result, ['V1.0.0-公文审批'])).to.deep.eq(testData.result.slice(1, 2));
-    expect(filterApiByTags(result, ['V2.0.0-基础设置'])).to.deep.eq(testData.result.slice(0, 1));
+    expect(filterApiByTags(result, ['公文管理--草稿箱'])).to.deep.eq(testData.result.slice(3));
+    expect(filterApiByTags(result, ['V1.0.0-公文审批'])).to.deep.eq(testData.result.slice(2, 3));
+    expect(filterApiByTags(result, ['V2.0.0-基础设置'])).to.deep.eq(testData.result.slice(0, 2));
   });
 
   it(`filterApiByTags ${key} no tags`, () => {
@@ -33,6 +33,7 @@ describe('test generateStandardApiData', () => {
   });
 
   it(`generateStandardApiData ${key}`, () => {
+    debugger;
     expect(generateStandardApiData(result, testData.input))
       .to
       .deep

@@ -46,6 +46,22 @@ const case1 = {
     ...base,
     'components': {
       'schemas': {
+        'BaseConfigEditRequest1': {
+          'title': 'BaseConfigEditRequest1',
+          'type': 'object',
+          'properties': {
+            "id": {
+              "format": "int64",
+              "description": "主键id",
+              "type": "integer"
+            },
+            "sort": {
+              "format": "int32",
+              "description": "排序",
+              "type": "integer"
+            }
+          }
+        },
         'BaseConfigEditRequest': {
           'title': 'BaseConfigEditRequest',
           'type': 'object',
@@ -344,6 +360,38 @@ const case1 = {
       },
     },
     'paths': {
+      '/auth/meeting/type/sort': {
+        'post': {
+          'summary': '编辑',
+          'requestBody': {
+            'content': {
+              'application/json': {
+                'schema': {
+                  type: 'array',
+                  items: {'$ref': 'BaseConfigEditRequest1' }
+                }
+                ,
+              },
+            },
+          },
+          'operationId': 'editUsingPOST',
+          'responses': {
+            '200': {
+              'description': 'OK',
+              'content': {
+                '*/*': {
+                  'schema': { '$ref': '统一响应类«boolean»' },
+                },
+              },
+            },
+            '201': { 'description': 'Created' },
+            '401': { 'description': 'Unauthorized' },
+            '403': { 'description': 'Forbidden' },
+            '404': { 'description': 'Not Found' },
+          },
+          'tags': ['V2.0.0-基础设置', '基础设置'],
+        },
+      },
       '/auth/baseConfig/edit': {
         'post': {
           'summary': '编辑',
@@ -459,6 +507,34 @@ const case1 = {
   },
   result: [
     {
+      'path': '/auth/meeting/type/sort',
+      'method': 'post',
+      'summary': '编辑',
+      'requestBody': {
+        'content': {
+          'application/json': {
+            'schema': { type: 'array', items: {'$ref': 'BaseConfigEditRequest1' } },
+          },
+        },
+      },
+      'operationId': 'editUsingPOST',
+      'responses': {
+        '200': {
+          'description': 'OK',
+          'content': {
+            '*/*': {
+              'schema': { '$ref': '统一响应类«boolean»' },
+            },
+          },
+        },
+        '201': { 'description': 'Created' },
+        '401': { 'description': 'Unauthorized' },
+        '403': { 'description': 'Forbidden' },
+        '404': { 'description': 'Not Found' },
+      },
+      'tags': ['V2.0.0-基础设置', '基础设置'],
+    },
+    {
       'path': '/auth/baseConfig/edit',
       'method': 'post',
       'summary': '编辑',
@@ -571,6 +647,75 @@ const case1 = {
     },
   ],
   standardResult: [
+    {
+      'id': 'editUsingPOST',
+      'path': '/auth/meeting/type/sort',
+      'title': '编辑',
+      'method': 'post',
+      'query': null,
+      'body': [
+        {
+          'description': undefined,
+          'required': true,
+          'type': 'array',
+          'subType': null,
+          'properties': [
+            {
+              'name': 'id',
+              'description': '主键id',
+              'required': false,
+              'type': 'integer',
+              'subType': null,
+              'properties': null,
+            },
+            {
+              'name': 'sort',
+              'description': '排序',
+              'required': false,
+              'type': 'integer',
+              'subType': null,
+              'properties': null,
+            },
+          ],
+        },
+      ],
+      'response': [
+        {
+          name: 'code',
+          description: '业务响应状态码',
+          required: false,
+          type: 'integer',
+          subType: null,
+          properties: null,
+        },
+        {
+          name: 'data',
+          description: '业务响应数据',
+          required: false,
+          type: 'boolean',
+          subType: null,
+          properties: null,
+        },
+        {
+          name: 'success',
+          description: '业务响应是否成功',
+          required: false,
+          type: 'boolean',
+          subType: null,
+          properties: null,
+        },
+        {
+          name: 'message',
+          description: '业务响应信息',
+          required: false,
+          type: 'string',
+          subType: null,
+          properties: null,
+        },
+      ],
+      'headersJson': 'application/json; charset=utf-8',
+      'tags': ['V2.0.0-基础设置', '基础设置'],
+    },
     {
       'id': 'editUsingPOST',
       'path': '/auth/baseConfig/edit',

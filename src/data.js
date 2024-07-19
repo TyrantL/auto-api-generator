@@ -120,7 +120,19 @@ function parseRequest(api, map) {
     }
 
     try {
-      body = getBodyFromSchemas(api.path, map, content[contentType].schema.$ref);
+      const obj = content[contentType].schema;
+      // 数组类型入参
+      if (obj.type === 'array' && obj.items?.$ref) {
+        body = [{
+          type: 'array',
+          required: true,
+          description: obj.description,
+          subType: obj.items?.type ?? null,
+          properties: getBodyFromSchemas(api.path, map, obj.items.$ref),
+        }];
+      } else {
+        body = getBodyFromSchemas(api.path, map, obj.$ref);
+      }
     } catch (e) {
       /* istanbul ignore next */
       console.error(chalk.red(`[${chalk.blue(api.path)}]接口入参异常被捕获，请联系后端排查`));
