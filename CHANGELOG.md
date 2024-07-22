@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.4](https://github.com/TyrantL/auto-api-generator/compare/v1.3.3...v1.3.4) (2024-07-22)
+
+
+### Bug Fixes
+
+* **bug修复:** 为表单数据请求设置正确的Content-Type ([dea9668](https://github.com/TyrantL/auto-api-generator/commit/dea96687fed94400ada7fbf1987ade6645deac92))
+
 ### [1.3.3](https://github.com/TyrantL/auto-api-generator/compare/v1.3.2...v1.3.3) (2024-07-19)
 
 
