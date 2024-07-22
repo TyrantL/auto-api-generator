@@ -806,6 +806,7 @@ const case1 = {
       'method': 'get',
       'title': '获取下一步流程节点信息',
       'id': 'getNextNodeUsingGET_1',
+      'headersJson': 'application/x-www-form-urlencoded',
       'query': [
         {
           'name': 'id',
@@ -1269,6 +1270,7 @@ const case1 = {
       'method': 'post',
       'title': '获取指定草稿内容',
       'id': 'getByUniqueCodeAndOdTypeUsingPOST',
+      'headersJson': 'application/x-www-form-urlencoded',
       query: [
         {
           'name': 'odType',

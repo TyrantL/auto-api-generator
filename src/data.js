@@ -109,6 +109,7 @@ function parseRequest(api, map) {
       subType: prop.schema?.items?.type ?? null,
       properties: null,
     }));
+    opts.headersJson = 'application/x-www-form-urlencoded';
   } else if (api.requestBody) {
     const { content } = api.requestBody;
     const contentType = Object.keys(content)[0];
