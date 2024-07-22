@@ -47,8 +47,8 @@ function baseInterceptor(instance) {
 
 function argsInterceptor(instance) {
   instance.interceptors.request.use((config) => {
-    // 当请求方法为GET且配置中包含data时，将data转移到params中，并清空data
-    if (config.method === 'get' && config.data) {
+    // 当请求方法为GET、DELETE且配置中包含data时，将data转移到params中，并清空data
+    if (['get', 'delete'].includes(config.method) && config.data) {
       config.params = config.data;
       config.data = null;
     }
