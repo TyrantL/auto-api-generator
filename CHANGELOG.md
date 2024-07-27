@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.5](https://github.com/TyrantL/auto-api-generator/compare/v1.3.4...v1.3.5) (2024-07-27)
+
+
+### Bug Fixes
+
+* **bug修复:** 修复request拦截器传入参数在params中报错的问题 ([78d2282](https://github.com/TyrantL/auto-api-generator/commit/78d22825af4d143d9bd03e1d32989b6533d12a70))
+
 ### [1.3.4](https://github.com/TyrantL/auto-api-generator/compare/v1.3.3...v1.3.4) (2024-07-22)
 
 
