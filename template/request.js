@@ -9,7 +9,7 @@ function baseInterceptor(instance) {
     // 请求url中有{key}，使用config.data中对应的值替换掉url中的模板字符串
     // eg. config.url = '/api/user/{id}', config.data = { id: 1 } => config.url = '/api/user/1'
     if (/\{.*?}/.test(config.url)) {
-      Object.entries(config.data).forEach(([key, value]) => {
+      Object.entries(config.data || config.params).forEach(([key, value]) => {
         config.url = config.url.replace(`{${key}}`, value.toString());
       });
     }
